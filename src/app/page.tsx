@@ -5,9 +5,12 @@ import { redirect } from "next/navigation";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import AuthButton from "./auth-button";
+import { getIsAdmin } from "~/server/better-auth/admin";
 
 export default async function Home() {
   const session = await getSession();
+  const isAdmin = await getIsAdmin();
+  console.log(isAdmin);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -15,6 +18,7 @@ export default async function Home() {
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
           What <span className="text-[hsl(280,100%,70%)]">Up</span> Peeps
         </h1>
+        {isAdmin && <h2 className="text-3xl text-red-600">{"hello admin!"}</h2>}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
           <Link
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
@@ -42,8 +46,13 @@ export default async function Home() {
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
-              {session && <span>Logged in as {session.user?.name}</span>}
+              {session && (
+                <span>
+                  Logged in as {session.user?.name} {session.user.email}
+                </span>
+              )}
             </p>
+            <img src={session?.user?.image!} />
 
             {!session ? (
               <AuthButton />
