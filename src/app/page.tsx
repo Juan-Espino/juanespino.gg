@@ -52,7 +52,7 @@ export default async function Home() {
                 </span>
               )}
             </p>
-            <img src={session?.user?.image!} />
+            <img src={session?.user?.image ?? ""} />
 
             {!session ? (
               <AuthButton />
