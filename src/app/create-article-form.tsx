@@ -12,7 +12,15 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+function getFormString(formData: FormData, key: string) {
+  const value = formData.get(key);
 
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value.trim();
+}
 export default function CreateArticleForm() {
   async function createArticle(formData: FormData) {
     "use server";
@@ -24,9 +32,9 @@ export default function CreateArticleForm() {
       throw new Error("Unauthorized");
     }
 
-    const title = String(formData.get("title") ?? "").trim();
-    const content = String(formData.get("content") ?? "").trim();
-    const imageUrl = String(formData.get("imageUrl") ?? "").trim();
+    const title = getFormString(formData, "title");
+    const content = getFormString(formData, "content");
+    const imageUrl = getFormString(formData, "imageUrl");
     const published = formData.get("published") === "on";
 
     if (!title) {
