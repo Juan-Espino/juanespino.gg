@@ -1,13 +1,14 @@
-import { db } from "~/server/db";
-
+import { getLatestArticle } from "~/server/articles";
 export const dynamic = "force-dynamic";
 export default async function Articles() {
-  const articles = await db.query.articles.findMany();
+  const article = await getLatestArticle();
   return (
-    <>
-      {articles.map((article) => (
+    <div>
+      {!article ? (
+        <></>
+      ) : (
         <div
-          key={article.id}
+          key={article?.id}
           className="flex min-h-screen flex-col items-center justify-center gap-2 bg-linear-to-b from-[#2e026d] to-[#15162c] text-white"
         >
           <h1 className="text-4xl">{article?.title ?? ""}</h1>
@@ -16,7 +17,7 @@ export default async function Articles() {
           <p>{article?.slug ?? ""}</p>
           <p>{article?.content ?? ""}</p>
         </div>
-      ))}
-    </>
+      )}
+    </div>
   );
 }

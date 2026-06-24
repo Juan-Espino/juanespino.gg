@@ -5,9 +5,10 @@ import { getSession } from "./better-auth/server";
 import { articles } from "./db/app-schema";
 import { redirect } from "next/navigation";
 import { db } from "./db";
+import { desc, eq } from "drizzle-orm";
 
 const createArticleSchema = z.object({
-  title: z.string().min(1).max(256),
+  title: z.string().trim().min(1).max(256),
   content: z.string().trim().min(1),
   imageUrl: z.string().url().optional(),
   published: z.boolean(),
@@ -75,4 +76,14 @@ export async function createArticle(formData: FormData) {
   });
 
   redirect("/");
+}
+
+export async function getLatestArticle() {
+  const [article] = await db
+    .select()
+    .from(articles)
+    .where(eq(articles.published, true))
+    .orderBy(desc(articles.createdAt))
+    .limit(1);
+  return article ?? null;
 }
