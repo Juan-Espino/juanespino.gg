@@ -27,6 +27,12 @@ export default async function Home() {
         >
           GO TO ARTICLES
         </Link>
+        <Link
+          className="rounded-full border p-2 text-blue-500"
+          href={"/edit-article"}
+        >
+          Edit ARTICLES
+        </Link>
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
