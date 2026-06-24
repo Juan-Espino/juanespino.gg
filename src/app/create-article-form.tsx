@@ -1,68 +1,6 @@
-import { getSession } from "~/server/better-auth/server";
-import { getIsAdmin } from "~/server/better-auth/admin";
-import { db } from "~/server/db";
-import { articles } from "~/server/db/app-schema";
-import { redirect } from "next/navigation";
+import { createArticle } from "~/server/articles";
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-function getFormString(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value.trim();
-}
 export default function CreateArticleForm() {
-  async function createArticle(formData: FormData) {
-    "use server";
-
-    const session = await getSession();
-    const isAdmin = await getIsAdmin();
-
-    if (!session?.user?.id || !isAdmin) {
-      throw new Error("Unauthorized");
-    }
-
-    const title = getFormString(formData, "title");
-    const content = getFormString(formData, "content");
-    const imageUrl = getFormString(formData, "imageUrl");
-    const published = formData.get("published") === "on";
-
-    if (!title) {
-      throw new Error("Title is required");
-    }
-
-    if (!content) {
-      throw new Error("Content is required");
-    }
-
-    const slug = slugify(title);
-
-    if (!slug) {
-      throw new Error("Slug could not be generated");
-    }
-
-    await db.insert(articles).values({
-      authorId: session.user.id,
-      title,
-      slug,
-      imageUrl: imageUrl || null,
-      content,
-      published,
-    });
-
-    redirect("/");
-  }
-
   return (
     <form
       action={createArticle}
