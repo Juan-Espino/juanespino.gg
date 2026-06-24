@@ -1,12 +1,13 @@
 import { db } from "~/server/db";
 
+export const dynamic = "force-dynamic";
 export default async function Articles() {
   const articles = await db.query.articles.findMany();
   return (
     <>
-      {articles.map((article, key) => (
+      {articles.map((article) => (
         <div
-          key={key}
+          key={article.id}
           className="flex min-h-screen flex-col items-center justify-center gap-2 bg-linear-to-b from-[#2e026d] to-[#15162c] text-white"
         >
           <h1 className="text-4xl">{article?.title ?? ""}</h1>
