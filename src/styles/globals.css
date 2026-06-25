@@ -1,6 +1,43 @@
 @import "tailwindcss";
 
+:root {
+  --bloggin-background: #050505;
+  --bloggin-foreground: #ececec;
+  --bloggin-muted: #8c8c8c;
+  --bloggin-border: #525252;
+  --bloggin-accent: #adebb3;
+  --bloggin-neon: #22d3e7;
+}
+
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --color-bloggin-background: var(--bloggin-background);
+  --color-bloggin-foreground: var(--bloggin-foreground);
+  --color-bloggin-muted: var(--bloggin-muted);
+  --color-bloggin-border: var(--bloggin-border);
+  --color-bloggin-accent: var(--bloggin-accent);
+  --color-bloggin-neon: var(--bloggin-neon);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bloggin-background);
+}
+
+p {
+  color: var(--color-bloggin-muted);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-bloggin-foreground);
 }
