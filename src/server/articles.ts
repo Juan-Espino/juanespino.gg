@@ -184,3 +184,15 @@ export async function updateArticle(slug: string, formData: FormData) {
   //TODO:Maybe make this redirect you to /article/new-slug once we have it
   redirect("/");
 }
+
+export async function deleteArticle(slug: string) {
+  const article = await getArticleBySlugForAdmin(slug);
+
+  if (!article) {
+    throw new Error("Failed, article does not exist");
+  }
+
+  await db.delete(articles).where(eq(articles.id, article.id));
+
+  redirect("/");
+}

@@ -6,7 +6,7 @@ export default function EditArticle() {
       <form
         action={async (formData) => {
           "use server";
-          await updateArticle("grimes", formData);
+          await updateArticle("my-pookie-grimes", formData);
         }}
         className="flex w-full max-w-xl flex-col gap-4"
       >
