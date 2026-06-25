@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "next build",
     "check": "eslint . && tsc --noEmit",
     "db:generate": "drizzle-kit generate",
@@ -49,5 +50,5 @@
   "ct3aMetadata": {
     "initVersion": "7.40.0"
   },
-  "packageManager": "npm@10.7.0"
+  "packageManager": "pnpm@10.12.4"
 }
