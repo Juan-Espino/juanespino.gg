@@ -57,7 +57,7 @@ export default function ArticleDisplay({
         ) : null}
 
         <div
-          className={`overlay-transition pointer-events-none absolute -inset-1 bg-black/70 backdrop-blur-[2px] ${
+          className={`overlay-transition pointer-events-none absolute -inset-1 transform-gpu bg-black/70 backdrop-blur-[2px] will-change-[opacity,backdrop-filter] ${
             scroll ? "opacity-0" : "opacity-100"
           }`}
         />
@@ -67,9 +67,13 @@ export default function ArticleDisplay({
             scroll ? "opacity-0" : "opacity-100"
           }`}
         >
-          <h2 className="text-4xl">{article.title}</h2>
+          <h2 className="max-w-[18rem] text-3xl leading-tight font-bold text-balance italic sm:text-4xl">
+            {article.title}
+          </h2>
           <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
-            <p className="relative">{formattedDate(article.createdAt)}</p>
+            <p className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
+              {formattedDate(article.createdAt)}
+            </p>
           </span>
         </div>
       </div>
