@@ -20,14 +20,13 @@ export default function ArticleDisplay({
 }: ArticleDisplayProps) {
   const [scroll, setScroll] = useState(false);
   useEffect(() => {
-    function handleScroll() {
-      setScroll(window.scrollY > 50);
-    }
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 50) {
+        setScroll(true);
+      } else {
+        setScroll(false);
+      }
+    });
   }, []);
 
   //for creating a new article
