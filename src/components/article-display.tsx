@@ -14,13 +14,24 @@ export default function ArticleDisplay({
   isAdmin,
   editing,
 }: ArticleDisplayProps) {
+  const [scroll, setScroll] = useState(false);
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 50) {
+        setScroll(true);
+      } else {
+        setScroll(false);
+      }
+    });
+  }, []);
+
   //for creating a new article
   if (!article)
     return (
       <section>
         <div>
-          <h1></h1>
-          <img />
+          <h1>{editing}</h1>
+          <img alt="" />
         </div>
         <div>
           <p></p>
@@ -28,18 +39,6 @@ export default function ArticleDisplay({
       </section>
     );
 
-  const [scroll, setScroll] = useState(false);
-  useEffect(() => {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 50) {
-        setScroll(true);
-        console.log(scroll);
-      } else {
-        setScroll(false);
-        console.log(scroll);
-      }
-    });
-  }, []);
   return (
     <section className="">
       <div
@@ -51,7 +50,11 @@ export default function ArticleDisplay({
       >
         <div>
           {article.imageUrl ? (
-            <img className="block w-full" src={article.imageUrl} />
+            <img
+              className="block w-full"
+              src={article.imageUrl}
+              alt={article.title}
+            />
           ) : (
             <></>
           )}

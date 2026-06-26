@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 
-import { account, session, user, verification } from "./auth-schema";
+import { account, session, user } from "./auth-schema";
 import { articles } from "./app-schema";
 
 export * from "./auth-schema";
