@@ -5,6 +5,7 @@ import { formattedDate } from "~/util/helpers";
 import ShareButton from "./share-button";
 import Link from "next/link";
 import DeleteButton from "./delete-buton";
+import Image from "next/image";
 
 type ArticleDisplayProps = {
   article?: typeof articles.$inferSelect;
@@ -53,7 +54,14 @@ export default function ArticleDisplay({
       >
         <div>
           {article.imageUrl ? (
-            <img className="" src={article.imageUrl} alt={article.title} />
+            // TODO:Lazy loading and optimization
+            <Image
+              className="h-auto w-full object-contain"
+              src={article.imageUrl}
+              alt={article.title}
+              width={1200}
+              height={800}
+            />
           ) : (
             <></>
           )}
@@ -74,13 +82,17 @@ export default function ArticleDisplay({
           {article.content}
         </p>
 
-        {isAdmin && (
+        {isAdmin ? (
           <div className="flex justify-center gap-4">
             <ShareButton slug={article.slug} />
 
             <Link href={`/edit/${article.slug}`}>edit</Link>
 
             <DeleteButton slug={article.slug} />
+          </div>
+        ) : (
+          <div className="flex justify-center gap-4">
+            <ShareButton slug={article.slug} />
           </div>
         )}
       </div>
