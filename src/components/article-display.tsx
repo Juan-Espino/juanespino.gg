@@ -45,30 +45,26 @@ export default function ArticleDisplay({
     );
   return (
     <section className="">
-      <div
-        className={`overlay-transition active:after:bg-bloggin-background/0 sticky -top-1 overflow-hidden border-none outline-none after:absolute after:-inset-1 after:block after:content-[''] active:after:backdrop-blur-none ${
-          scroll
-            ? ""
-            : "after:bg-bloggin-background/70 after:backdrop-blur-[2px]"
-        }`}
-      >
-        <div>
-          {article.imageUrl ? (
-            // TODO:Lazy loading and optimization
-            <Image
-              className="h-auto w-full object-contain"
-              src={article.imageUrl}
-              alt={article.title}
-              width={1200}
-              height={800}
-            />
-          ) : (
-            <></>
-          )}
-        </div>
+      <div className="sticky -top-1 overflow-hidden">
+        {article.imageUrl ? (
+          <Image
+            className="h-auto w-full object-contain"
+            src={article.imageUrl}
+            alt={article.title}
+            width={1200}
+            height={800}
+          />
+        ) : null}
+
         <div
-          className={`overlay-transition absolute -inset-px z-10 flex flex-col items-center justify-center gap-4 active:opacity-0 ${
-            scroll ? "opacity-0" : ""
+          className={`overlay-transition pointer-events-none absolute -inset-1 bg-black/70 backdrop-blur-[2px] ${
+            scroll ? "opacity-0" : "opacity-100"
+          }`}
+        />
+
+        <div
+          className={`overlay-transition absolute -inset-px z-10 flex flex-col items-center justify-center gap-4 ${
+            scroll ? "opacity-0" : "opacity-100"
           }`}
         >
           <h2 className="text-4xl">{article.title}</h2>
