@@ -9,6 +9,24 @@
   --bloggin-neon: #22d3e7;
 }
 
+.overlay-transition {
+  transition-property: backdrop-filter, background-color, opacity;
+  transition-duration: 500ms;
+  transition-timing-function: ease-in-out;
+}
+
+.overlay-transition::before {
+  transition-property: backdrop-filter, background-color, opacity;
+  transition-duration: 500ms;
+  transition-timing-function: ease-in-out;
+}
+
+.overlay-transition::after {
+  transition-property: backdrop-filter, background-color, opacity;
+  transition-duration: 500ms;
+  transition-timing-function: ease-in-out;
+}
+
 @theme {
   --font-sans:
     var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
