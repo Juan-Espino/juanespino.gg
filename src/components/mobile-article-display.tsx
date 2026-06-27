@@ -1,5 +1,5 @@
 "use client";
-import type { articles } from "~/server/db/app-schema";
+import type { Article } from "~/server/db/app-schema";
 import { formattedDate } from "~/util/helpers";
 import ShareButton from "./share-button";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 
 type MobileArticleDisplayProps = {
   className: string;
-  article: typeof articles.$inferSelect;
+  article: Article;
   editing?: boolean;
   isAdmin: boolean;
 };
@@ -58,9 +58,9 @@ export default function MobileArticleDisplay({
             {article.title}
           </h2>
           <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
-            <p className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
+            <span className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
               {formattedDate(article.createdAt)}
-            </p>
+            </span>
           </span>
         </div>
       </div>

@@ -3,6 +3,7 @@ export function formattedDate(date: Date) {
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "America/Los_Angeles",
   })
     .format(date)
     .toString();

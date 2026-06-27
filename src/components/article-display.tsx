@@ -1,5 +1,5 @@
 "use client";
-import type { articles } from "~/server/db/app-schema";
+import type { Article } from "~/server/db/app-schema";
 import MobileArticleDisplay from "./mobile-article-display";
 import ShareButton from "./share-button";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { formattedDate } from "~/util/helpers";
 import ReadMoreButton from "./read-more-button";
 
 type ArticleDisplayProps = {
-  article?: typeof articles.$inferSelect;
+  article?: Article;
   editing?: boolean;
   isAdmin: boolean;
 };

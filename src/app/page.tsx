@@ -7,7 +7,7 @@ export default async function Home() {
   const articles = await getLatestPublishedArticles(10);
   const isAdmin = await getIsAdmin();
 
-  if (!articles.length)
+  if (!articles[0])
     return (
       <main className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col items-center justify-center">

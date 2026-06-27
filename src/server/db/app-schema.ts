@@ -36,3 +36,5 @@ export const articles = createTable(
     index("article_author_id_idx").on(t.authorId),
   ],
 );
+
+export type Article = typeof articles.$inferSelect;
