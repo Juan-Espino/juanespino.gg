@@ -73,6 +73,8 @@ export default function ArticleDisplay({
             </div>
 
             <div className="clear-both" />
+
+            {/* TODO:deterimine if delete button should stay here */}
             {isAdmin ? (
               <div className="flex justify-center gap-4">
                 <ShareButton slug={article.slug} />
