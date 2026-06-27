@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
 import type { articles } from "~/server/db/app-schema";
-import { formattedDate } from "~/util/helpers";
+import MobileArticleDisplay from "./mobile-article-display";
 import ShareButton from "./share-button";
 import Link from "next/link";
 import DeleteButton from "./delete-buton";
 import Image from "next/image";
+import { formattedDate } from "~/util/helpers";
+import ReadMoreButton from "./read-more-button";
 
 type ArticleDisplayProps = {
   article?: typeof articles.$inferSelect;
@@ -18,18 +19,6 @@ export default function ArticleDisplay({
   isAdmin,
   editing,
 }: ArticleDisplayProps) {
-  const [scroll, setScroll] = useState(false);
-  useEffect(() => {
-    function handleScroll() {
-      setScroll(window.scrollY > 50);
-    }
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   //for creating a new article
   if (!article)
     return (
@@ -45,57 +34,61 @@ export default function ArticleDisplay({
     );
   return (
     <section className="">
-      <div className="sticky -top-1 overflow-hidden">
-        {article.imageUrl ? (
-          <Image
-            className="h-auto w-full object-contain"
-            src={article.imageUrl}
-            alt={article.title}
-            width={1200}
-            height={800}
-          />
-        ) : null}
-
-        <div
-          className={`overlay-transition pointer-events-none absolute -inset-1 transform-gpu bg-black/70 backdrop-blur-[2px] will-change-[opacity,backdrop-filter] ${
-            scroll ? "opacity-0" : "opacity-100"
-          }`}
+      <>
+        <MobileArticleDisplay
+          className={"lg:hidden"}
+          article={article}
+          isAdmin={isAdmin}
+          editing={editing}
         />
+        <div className="hidden w-full lg:block">
+          <article>
+            <header className="border-bloggin-border/40 mb-4 border-b pb-4">
+              <h2 className="mb-2 max-w-xl text-4xl font-bold text-balance italic">
+                {article.title}
+              </h2>
+              <p className="text-bloggin-muted/70! text-sm whitespace-nowrap">
+                {formattedDate(article.createdAt)}
+              </p>
+            </header>
 
-        <div
-          className={`overlay-transition absolute -inset-px z-10 flex flex-col items-center justify-center gap-4 ${
-            scroll ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          <h2 className="max-w-[18rem] text-3xl leading-tight font-bold text-balance italic sm:text-4xl">
-            {article.title}
-          </h2>
-          <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
-            <p className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
-              {formattedDate(article.createdAt)}
-            </p>
-          </span>
+            {article.imageUrl && (
+              // TODO:Make sure image here and on mobile are predefined after uploadthing!
+              <div className="float-right mb-2 ml-8 w-[48%] max-w-xl overflow-hidden rounded-xl">
+                <Image
+                  className="h-auto w-full object-cover pt-2"
+                  src={article.imageUrl}
+                  alt={article.title}
+                  width={800}
+                  height={533}
+                />
+              </div>
+            )}
+            <div className="">
+              <p className="text-lg leading-8 font-semibold wrap-break-word whitespace-pre-wrap">
+                {article.content}
+              </p>
+              {/* TODO:Finish this */}
+              <ReadMoreButton />
+            </div>
+
+            <div className="clear-both" />
+            {isAdmin ? (
+              <div className="flex justify-center gap-4">
+                <ShareButton slug={article.slug} />
+
+                <Link href={`/edit/${article.slug}`}>edit</Link>
+
+                <DeleteButton slug={article.slug} />
+              </div>
+            ) : (
+              <div className="flex justify-center gap-4">
+                <ShareButton slug={article.slug} />
+              </div>
+            )}
+          </article>
         </div>
-      </div>
-      <div className="w-full min-w-0 p-4 text-center">
-        <p className="text-base leading-7 wrap-break-word whitespace-pre-wrap">
-          {article.content}
-        </p>
-
-        {isAdmin ? (
-          <div className="flex justify-center gap-4">
-            <ShareButton slug={article.slug} />
-
-            <Link href={`/edit/${article.slug}`}>edit</Link>
-
-            <DeleteButton slug={article.slug} />
-          </div>
-        ) : (
-          <div className="flex justify-center gap-4">
-            <ShareButton slug={article.slug} />
-          </div>
-        )}
-      </div>
+      </>
     </section>
   );
 }

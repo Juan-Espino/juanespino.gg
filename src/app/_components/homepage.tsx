@@ -1,4 +1,5 @@
 import ArticleDisplay from "~/components/article-display";
+import LatestArticles from "~/components/lastest-articles";
 import type { articles } from "~/server/db/app-schema";
 
 type HomePageProps = {
@@ -12,6 +13,7 @@ export default function HomePage({ articles, isAdmin }: HomePageProps) {
   return (
     <div>
       <ArticleDisplay article={article} isAdmin={isAdmin} />
+      <LatestArticles />
     </div>
   );
 }

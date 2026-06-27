@@ -1,6 +1,6 @@
 export function formattedDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
-    month: "short",
+    month: "long",
     day: "numeric",
     year: "numeric",
   })
