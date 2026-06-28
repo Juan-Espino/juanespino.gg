@@ -130,6 +130,21 @@ export async function getLatestPublishedArticles(limit = 10) {
   return articlesArr;
 }
 
+export async function getLatestPublishedArticlesExcludingSlug(
+  slug: string,
+  limit = 9,
+) {
+  const safeLimit = Math.min(Math.max(limit, 1), 50);
+  const articlesArr = await db
+    .select()
+    .from(articles)
+    .where(and(eq(articles.published, true), ne(articles.slug, slug)))
+    .orderBy(desc(articles.createdAt))
+    .limit(safeLimit);
+
+  return articlesArr;
+}
+
 export async function getPublishedArticleBySlug(slug: string) {
   const [article] = await db
     .select()

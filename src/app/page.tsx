@@ -1,13 +1,16 @@
 import { getLatestPublishedArticles } from "~/server/articles";
 import { getIsAdmin } from "~/server/better-auth/admin";
 
+import ArticleDisplay from "../components/article-display";
+import LatestArticles from "../components/latest-articles";
 import NoContent from "../components/no-content";
-import HomePage from "./_components/homepage";
+
 export default async function Home() {
   const articles = await getLatestPublishedArticles(10);
   const isAdmin = await getIsAdmin();
+  const [article, ...latestArticles] = articles;
 
-  if (!articles[0])
+  if (!article)
     return (
       <main className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col items-center justify-center">
@@ -18,7 +21,10 @@ export default async function Home() {
 
   return (
     <main className="flex w-full flex-col items-center justify-center">
-      <HomePage articles={articles} isAdmin={isAdmin} />
+      <div>
+        <ArticleDisplay article={article} isAdmin={isAdmin} />
+        <LatestArticles latestArticles={latestArticles} />
+      </div>
     </main>
   );
 }

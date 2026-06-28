@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import ArticleDisplay from "~/components/article-display";
+import LatestArticles from "~/components/latest-articles";
 import {
   getArticleBySlugForAdmin,
+  getLatestPublishedArticlesExcludingSlug,
   getPublishedArticleBySlug,
 } from "~/server/articles";
 import { getIsAdmin } from "~/server/better-auth/admin";
@@ -48,17 +50,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const isAdmin = await getIsAdmin();
 
-  const article = isAdmin
-    ? await getArticleBySlugForAdmin(slug)
-    : await getArticle(slug);
+  const [article, latestArticles] = await Promise.all([
+    isAdmin ? getArticleBySlugForAdmin(slug) : getArticle(slug),
+    getLatestPublishedArticlesExcludingSlug(slug, 9),
+  ]);
 
   if (!article) {
     notFound();
   }
 
   return (
-    <main>
-      <ArticleDisplay article={article} isAdmin={isAdmin} />
+    <main className="flex w-full flex-col items-center justify-center">
+      <div>
+        <ArticleDisplay article={article} isAdmin={isAdmin} />
+        <LatestArticles latestArticles={latestArticles} />
+      </div>
     </main>
   );
 }
