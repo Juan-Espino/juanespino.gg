@@ -7,10 +7,22 @@ import { redirect } from "next/navigation";
 import { db } from "./db";
 import { and, desc, eq, ne } from "drizzle-orm";
 
+export type ArticleFormState = {
+  success: boolean;
+  message?: string;
+  errors?: {
+    title?: string[];
+    imageUrl?: string[];
+    content?: string[];
+    published?: string[];
+    _form?: string[];
+  };
+};
+
 const createArticleSchema = z.object({
-  title: z.string().trim().min(1).max(256),
-  content: z.string().trim().min(1),
-  imageUrl: z.string().url().optional(),
+  title: z.string().trim().min(1, "title is required").max(256),
+  content: z.string().trim().min(1, "content is required"),
+  imageUrl: z.string().url("enter a valid image URL").optional(),
   published: z.boolean(),
 });
 
@@ -76,7 +88,10 @@ async function getUniqueArticleSlug(title: string, ignoredArticleId?: number) {
   return slug;
 }
 
-export async function createArticle(formData: FormData) {
+export async function createArticle(
+  _prevState: ArticleFormState,
+  formData: FormData,
+): Promise<ArticleFormState> {
   const session = await getSession();
 
   if (!session?.user.id) {
@@ -90,7 +105,10 @@ export async function createArticle(formData: FormData) {
   const result = createArticleSchema.safeParse(getCreateArticleInput(formData));
 
   if (!result.success) {
-    throw new Error("Failed, article is not valid");
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
   const input = result.data;
@@ -169,7 +187,11 @@ export async function getArticleBySlugForAdmin(slug: string) {
   return article ?? null;
 }
 
-export async function updateArticle(slug: string, formData: FormData) {
+export async function updateArticle(
+  slug: string,
+  _prevState: ArticleFormState,
+  formData: FormData,
+): Promise<ArticleFormState> {
   const article = await getArticleBySlugForAdmin(slug);
 
   if (!article) {
@@ -179,7 +201,10 @@ export async function updateArticle(slug: string, formData: FormData) {
   const result = createArticleSchema.safeParse(getCreateArticleInput(formData));
 
   if (!result.success) {
-    throw new Error("Failed, article is not valid");
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
   const input = result.data;
