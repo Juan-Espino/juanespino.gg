@@ -47,6 +47,7 @@ export default function ArticleEditor({
         <SubmitButton mode={mode} />
       </form>
       {initialValues && (
+        // TODO:shadcn this
         <form action={deleteArticleAction.bind(null, initialValues.slug)}>
           <button>delete</button>
         </form>

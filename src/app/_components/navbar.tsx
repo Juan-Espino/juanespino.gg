@@ -1,18 +1,24 @@
 import Link from "next/link";
+import SignInButton from "~/components/sign-in-button";
+import SignOutButton from "~/components/sign-out-button";
+import { getSession } from "~/server/better-auth/server";
 
 type NavBarProps = {
   className?: string;
 };
-export default function NavBar({ className }: NavBarProps) {
+export default async function NavBar({ className }: NavBarProps) {
+  const session = await getSession();
   return (
     <nav className={`${className ?? ""} flex gap-4`}>
       {/* TODO:add link to home from bloggin */}
       <p>bloggin</p>
       <p>all articles</p>
       <p></p>
-      <p>sign in</p>
+
+      {/* TODO:sign in dialog */}
+      {session?.user ? <SignOutButton /> : <SignInButton />}
+
       {/* //TODO:make sure user is admin 
-        if so logout button
         if so new +
         if so drafts
       */}
