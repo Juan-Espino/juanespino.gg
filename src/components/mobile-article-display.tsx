@@ -6,6 +6,7 @@ import Link from "next/link";
 import DeleteButton from "./delete-buton";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import MarkdownContent from "./markdown-content";
 
 type MobileArticleDisplayProps = {
   className: string;
@@ -63,9 +64,7 @@ export default function MobileArticleDisplay({
         </div>
       </div>
       <div className="w-full min-w-0 p-4 text-center">
-        <p className="text-base leading-7 font-semibold wrap-break-word whitespace-pre-wrap">
-          {article.content}
-        </p>
+        <MarkdownContent content={article.content} />
 
         {isAdmin ? (
           <div className="flex justify-center gap-4">

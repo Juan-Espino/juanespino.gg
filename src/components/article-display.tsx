@@ -7,7 +7,7 @@ import DeleteButton from "./delete-buton";
 import Image from "next/image";
 import { formattedDate } from "~/util/helpers";
 import ReadMoreButton from "./read-more-button";
-import MarkdownContent from "./mardown-content";
+import MarkdownContent from "./markdown-content";
 
 type ArticleDisplayProps = {
   article?: Article;

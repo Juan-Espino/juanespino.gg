@@ -20,17 +20,17 @@ export default function MarkdownContent({
             </p>
           ),
           strong: ({ children }) => (
-            <strong className="text-bloggin-foreground font-bold">
+            <strong className="text-bloggin-accent/70 font-bold">
               {children}
             </strong>
           ),
           h1: ({ children }) => (
-            <h1 className="text-bloggin-foreground mb-4 text-4xl font-bold">
+            <h1 className="text-bloggin-foreground/85! mb-4 text-4xl font-bold">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-bloggin-foreground mb-3 text-2xl font-bold">
+            <h2 className="text-bloggin-foreground/85! mb-3 text-2xl font-bold">
               {children}
             </h2>
           ),

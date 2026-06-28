@@ -3,7 +3,7 @@ import { useActionState, useState } from "react";
 import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import { deleteArticleAction } from "~/server/actions";
-import MarkdownContent from "./mardown-content";
+import MarkdownContent from "./markdown-content";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
