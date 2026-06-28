@@ -10,28 +10,15 @@ import ReadMoreButton from "./read-more-button";
 
 type ArticleDisplayProps = {
   article?: Article;
-  editing?: boolean;
   isAdmin: boolean;
 };
 
 export default function ArticleDisplay({
   article,
   isAdmin,
-  editing,
 }: ArticleDisplayProps) {
   //for creating a new article
-  if (!article)
-    return (
-      <section>
-        <div>
-          <h1>{editing}</h1>
-          <img alt="" />
-        </div>
-        <div>
-          <p></p>
-        </div>
-      </section>
-    );
+  if (!article) return null;
   return (
     <section className="">
       <>
@@ -39,7 +26,6 @@ export default function ArticleDisplay({
           className={"lg:hidden"}
           article={article}
           isAdmin={isAdmin}
-          editing={editing}
         />
         <div className="hidden w-full lg:block">
           <article>

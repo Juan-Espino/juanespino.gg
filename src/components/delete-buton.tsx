@@ -10,6 +10,7 @@ export default function DeleteButton({ slug }: DeleteButtonProps) {
         await deleteArticleAction(slug);
       }}
     >
+      {/* TODO:add dialog 'are you sure?' */}
       <button type="submit" className="text-red-500">
         delete
       </button>

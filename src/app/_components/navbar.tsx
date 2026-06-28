@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type NavBarProps = {
   className?: string;
 };
@@ -14,7 +16,9 @@ export default function NavBar({ className }: NavBarProps) {
         if so new +
         if so drafts
       */}
-      <p className="text-bloggin-accent!">new+</p>
+      <Link href={"/new"} className="text-bloggin-accent!">
+        new+
+      </Link>
     </nav>
   );
 }

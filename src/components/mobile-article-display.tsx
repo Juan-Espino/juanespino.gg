@@ -10,13 +10,11 @@ import { useState, useEffect } from "react";
 type MobileArticleDisplayProps = {
   className: string;
   article: Article;
-  editing?: boolean;
   isAdmin: boolean;
 };
 export default function MobileArticleDisplay({
   article,
   isAdmin,
-  editing,
   className,
 }: MobileArticleDisplayProps) {
   const [scroll, setScroll] = useState(false);
