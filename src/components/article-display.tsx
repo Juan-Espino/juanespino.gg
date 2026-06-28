@@ -7,6 +7,7 @@ import DeleteButton from "./delete-buton";
 import Image from "next/image";
 import { formattedDate } from "~/util/helpers";
 import ReadMoreButton from "./read-more-button";
+import MarkdownContent from "./mardown-content";
 
 type ArticleDisplayProps = {
   article?: Article;
@@ -51,9 +52,7 @@ export default function ArticleDisplay({
               </div>
             )}
             <div className="">
-              <p className="text-lg leading-8 font-semibold wrap-break-word whitespace-pre-wrap">
-                {article.content}
-              </p>
+              <MarkdownContent content={article.content} />
               {/* TODO:Finish this */}
               <ReadMoreButton />
             </div>

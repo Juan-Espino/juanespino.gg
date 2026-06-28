@@ -20,7 +20,11 @@ export type ArticleFormState = {
 };
 
 const createArticleSchema = z.object({
-  title: z.string().trim().min(1, "title is required").max(256),
+  title: z
+    .string()
+    .trim()
+    .min(1, "title is required")
+    .max(256, "Title must be 256 characters or fewer."),
   content: z.string().trim().min(1, "content is required"),
   imageUrl: z.string().url("enter a valid image URL").optional(),
   published: z.boolean(),

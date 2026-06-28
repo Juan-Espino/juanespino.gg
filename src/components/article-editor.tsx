@@ -1,8 +1,9 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import { deleteArticleAction } from "~/server/actions";
+import MarkdownContent from "./mardown-content";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -29,6 +30,7 @@ export default function ArticleEditor({
   initialValues,
 }: ArticleEditorProps) {
   const [state, formAction] = useActionState(action, initialArticleFormState);
+  const [content, setContent] = useState(initialValues?.content ?? "");
   return (
     //TODO:design in shape of article-display
     <div>
@@ -56,6 +58,7 @@ export default function ArticleEditor({
         <textarea
           name="content"
           defaultValue={initialValues?.content ?? ""}
+          onChange={(event) => setContent(event.target.value)}
           placeholder="write your article in Markdown..."
         />
         {state.errors?.content?.map((error) => (
@@ -63,6 +66,10 @@ export default function ArticleEditor({
             {error}
           </p>
         ))}
+        <MarkdownContent
+          content={content}
+          className="rounded border border-yellow-200/50 p-4"
+        />
         <label>
           <input
             type="checkbox"
