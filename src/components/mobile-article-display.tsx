@@ -31,14 +31,14 @@ export default function MobileArticleDisplay({
   }, []);
   return (
     <div className={`${className ?? ""}`}>
-      <div className="sticky -top-1 overflow-hidden">
+      <div className="sticky -top-1 aspect-3/2 overflow-hidden">
         {article.imageUrl ? (
           <Image
-            className="h-auto w-full object-contain"
+            className="h-full w-full object-cover"
             src={article.imageUrl}
             alt={article.title}
-            width={400}
-            height={266}
+            width={800}
+            height={533}
           />
         ) : null}
 

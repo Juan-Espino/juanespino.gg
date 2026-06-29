@@ -21,7 +21,7 @@ export default function ListArticles({ articles, draft }: ListArticlesProps) {
       {articles.map((article) => (
         <Link
           key={article.slug}
-          href={draft ? `edit/${article.slug}` : `article/${article.slug}`}
+          href={draft ? `/edit/${article.slug}` : `/article/${article.slug}`}
           className="group hover:border-bloggin-accent focus-visible:border-bloggin-accent grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-6 border-b border-transparent py-4 transition-colors duration-200 focus-visible:outline-none"
         >
           <span className="text-bloggin-muted group-hover:text-bloggin-foreground truncate text-sm font-bold transition-colors duration-200 sm:text-base">

@@ -41,9 +41,9 @@ export default function ArticleDisplay({
 
             {article.imageUrl && (
               // TODO:Make sure image here and on mobile are predefined after uploadthing!
-              <div className="float-right mb-2 ml-8 w-[48%] max-w-xl overflow-hidden rounded-xl">
+              <div className="float-right ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
                 <Image
-                  className="h-auto w-full object-cover pt-2"
+                  className="h-auto w-full object-cover"
                   src={article.imageUrl}
                   alt={article.title}
                   width={800}

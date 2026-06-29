@@ -5,6 +5,7 @@ type ShareButtonProps = {
 };
 export default function ShareButton({ slug }: ShareButtonProps) {
   return (
+    // TODO:shadcn this and add toast when clicked
     <button
       className=""
       onClick={async () => {
