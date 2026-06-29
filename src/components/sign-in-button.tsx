@@ -2,10 +2,14 @@
 
 import { authClient } from "~/server/better-auth/client";
 
-export default function SignInButton() {
+type SignInButtonProps = {
+  className?: string;
+};
+
+export default function SignInButton({ className }: SignInButtonProps) {
   return (
-    // TODO:shadcn this bitch
     <button
+      className={className}
       onClick={async () => {
         await authClient.signIn.social({
           provider: "github",
