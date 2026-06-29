@@ -14,6 +14,10 @@ type ArticlePageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    created?: string;
+    updated?: string;
+  }>;
 };
 
 const getArticle = cache(async (slug: string) => {
@@ -46,8 +50,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({
+  params,
+  searchParams,
+}: ArticlePageProps) {
   const { slug } = await params;
+  const { created, updated } = await searchParams;
+
   const isAdmin = await getIsAdmin();
 
   const [article, latestArticles] = await Promise.all([
@@ -59,9 +68,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  const statusMessage =
+    created === "1"
+      ? "article created"
+      : updated === "1"
+        ? "article updated"
+        : null;
+
   return (
     <main className="flex w-full flex-col items-center justify-center">
       <div>
+        {/* TODO:shadcn this as a toast! */}
+        {statusMessage && (
+          <div className="border-bloggin-accent/40 bg-bloggin-accent/10 text-bloggin-accent mb-4 rounded border px-4 py-3 text-sm">
+            {statusMessage}
+          </div>
+        )}
         <ArticleDisplay article={article} isAdmin={isAdmin} />
         <LatestArticles latestArticles={latestArticles} />
       </div>

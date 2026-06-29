@@ -5,7 +5,7 @@
   --bloggin-foreground: #ececec;
   --bloggin-muted: #8c8c8c;
   --bloggin-border: #525252;
-  --bloggin-accent: #adebb3;
+  --bloggin-accent: rgb(173 235 179 / 70%);
   --bloggin-neon: #22d3e7;
 }
 

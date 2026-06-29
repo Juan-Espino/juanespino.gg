@@ -20,7 +20,7 @@ export default function MarkdownContent({
             </p>
           ),
           strong: ({ children }) => (
-            <strong className="text-bloggin-accent/70 font-bold">
+            <strong className="text-bloggin-accent font-bold">
               {children}
             </strong>
           ),

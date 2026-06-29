@@ -127,7 +127,7 @@ export async function createArticle(
     published: input.published,
   });
 
-  redirect("/");
+  redirect(`/article/${slug}?created=1`);
 }
 
 export async function getRecentPublishedArticle() {
@@ -225,8 +225,7 @@ export async function updateArticle(
     })
     .where(eq(articles.id, article.id));
 
-  //TODO:Maybe make this redirect you to /article/new-slug once we have it
-  redirect("/");
+  redirect(`/article/${newSlug}?updated=1`);
 }
 
 export async function deleteArticle(slug: string) {
