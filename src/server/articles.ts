@@ -19,6 +19,12 @@ export type ArticleFormState = {
   };
 };
 
+export type ArticleLinks = {
+  title: string;
+  slug: string;
+  createdAt: Date;
+};
+
 const createArticleSchema = z.object({
   title: z
     .string()
@@ -238,4 +244,39 @@ export async function deleteArticle(slug: string) {
   await db.delete(articles).where(eq(articles.id, article.id));
 
   redirect("/");
+}
+
+//for 'all' articles page
+export async function getPublishedArticleLinks(limit = 50) {
+  const safeLimit = Math.min(Math.max(limit, 1), 50);
+
+  return db
+    .select({
+      title: articles.title,
+      slug: articles.slug,
+      createdAt: articles.createdAt,
+    })
+    .from(articles)
+    .where(eq(articles.published, true))
+    .orderBy(desc(articles.createdAt))
+    .limit(safeLimit);
+}
+
+export async function getDraftArticleLinksForAdmin(limit = 50) {
+  if (!(await getIsAdmin())) {
+    throw new Error("Unauthorized");
+  }
+
+  const safeLimit = Math.min(Math.max(limit, 1), 50);
+
+  return db
+    .select({
+      title: articles.title,
+      slug: articles.slug,
+      createdAt: articles.createdAt,
+    })
+    .from(articles)
+    .where(eq(articles.published, false))
+    .orderBy(desc(articles.createdAt))
+    .limit(safeLimit);
 }

@@ -12,7 +12,7 @@ export default async function NavBar({ className }: NavBarProps) {
     <nav className={`${className ?? ""} flex gap-4`}>
       {/* TODO:add link to home from bloggin */}
       <p>bloggin</p>
-      <p>all articles</p>
+      <Link href={"/articles"}>all articles</Link>
       <p></p>
 
       {/* TODO:sign in dialog */}
@@ -22,6 +22,8 @@ export default async function NavBar({ className }: NavBarProps) {
         if so new +
         if so drafts
       */}
+      <Link href={"/drafts"}>drafts</Link>
+
       <Link href={"/new"} className="text-bloggin-accent!">
         new+
       </Link>
