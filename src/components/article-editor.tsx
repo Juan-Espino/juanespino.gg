@@ -4,6 +4,7 @@ import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import { deleteArticleAction } from "~/server/actions";
 import MarkdownContent from "./markdown-content";
+import DeleteButton from "./delete-buton";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -85,12 +86,7 @@ export default function ArticleEditor({
           {error}
         </p>
       ))}
-      {initialValues && (
-        // TODO:shadcn this
-        <form action={deleteArticleAction.bind(null, initialValues.slug)}>
-          <button>delete</button>
-        </form>
-      )}
+      {initialValues && <DeleteButton slug={initialValues.slug} />}
     </div>
   );
 }
