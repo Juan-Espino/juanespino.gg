@@ -6,7 +6,7 @@ import MarkdownContent from "./markdown-content";
 import DeleteButton from "./delete-buton";
 import Image from "next/image";
 import { UploadDropzone } from "~/utils/uploadthing";
-import { removeArticleImageAction } from "~/server/actions";
+import { deleteUploadedImage } from "~/server/actions";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -28,6 +28,10 @@ type ArticleEditorProps = {
   };
 };
 
+export async function deleteUploadedImageAction(imageKey: string) {
+  return deleteUploadedImage(imageKey);
+}
+
 export default function ArticleEditor({
   mode,
   action,
@@ -41,20 +45,29 @@ export default function ArticleEditor({
   const [imageRemovalError, setImageRemovalError] = useState<string | null>(
     null,
   );
+  const savedImageKey = initialValues?.imageKey ?? "";
+  const currentImageIsUnsaved = imageKey !== "" && imageKey !== savedImageKey;
 
   function handleChangeImage() {
     if (!imageKey || isRemovingImage) return;
 
     setImageRemovalError(null);
 
+    if (!currentImageIsUnsaved) {
+      setImageUrl("");
+      setImageKey("");
+      return;
+    }
+
+    const keyToDelete = imageKey;
+
     startRemovingImage(async () => {
-      const result = await removeArticleImageAction(
-        initialValues?.slug ?? null,
-        imageKey,
-      );
+      const result = await deleteUploadedImageAction(keyToDelete);
 
       if (!result.success) {
-        setImageRemovalError(result.message ?? "Failed to remove image");
+        setImageRemovalError(
+          result.message ?? "Failed to delete uploaded image",
+        );
         return;
       }
 

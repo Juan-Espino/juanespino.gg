@@ -10,7 +10,7 @@ import { UTApi } from "uploadthing/server";
 
 const utapi = new UTApi();
 
-async function deleteUploadThingFile(imageKey: string) {
+export async function deleteUploadThingFile(imageKey: string) {
   try {
     await utapi.deleteFiles(imageKey);
   } catch (error) {
@@ -258,6 +258,9 @@ export async function updateArticle(
   const input = result.data;
   const newSlug = await getUniqueArticleSlug(input.title, article.id);
 
+  const previousImageKey = article.imageKey;
+  const nextImageKey = input.imageKey ?? null;
+
   await db
     .update(articles)
     .set({
@@ -265,17 +268,13 @@ export async function updateArticle(
       content: input.content,
       slug: newSlug,
       imageUrl: input.imageUrl ?? null,
-      imageKey: input.imageKey ?? null,
+      imageKey: nextImageKey,
       published: input.published,
     })
     .where(eq(articles.id, article.id));
 
-  if (
-    article.imageKey &&
-    input.imageKey &&
-    article.imageKey !== input.imageKey
-  ) {
-    await deleteUploadThingFile(article.imageKey);
+  if (previousImageKey && previousImageKey !== nextImageKey) {
+    await deleteUploadThingFile(previousImageKey);
   }
 
   redirect(`/article/${newSlug}?updated=1`);
