@@ -20,6 +20,7 @@ export const articles = createTable(
     title: d.varchar({ length: 256 }).notNull(),
     slug: d.varchar({ length: 256 }).notNull().unique(),
     imageUrl: text("image_url"),
+    imageKey: text("image_key"),
     content: text("content").notNull(),
     published: boolean("published").default(false).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })

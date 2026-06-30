@@ -44,6 +44,12 @@ export default function MarkdownContent({
               {children}
             </a>
           ),
+          img: ({ src }) => (
+            <img
+              src={src}
+              className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+            />
+          ),
         }}
       >
         {content}

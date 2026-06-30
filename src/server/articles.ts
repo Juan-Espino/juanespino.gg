@@ -6,6 +6,17 @@ import { articles } from "./db/app-schema";
 import { redirect } from "next/navigation";
 import { db } from "./db";
 import { and, desc, eq, ne } from "drizzle-orm";
+import { UTApi } from "uploadthing/server";
+
+const utapi = new UTApi();
+
+async function deleteUploadThingFile(imageKey: string) {
+  try {
+    await utapi.deleteFiles(imageKey);
+  } catch (error) {
+    console.error("Failed to delete UploadThing file", error);
+  }
+}
 
 export type ArticleFormState = {
   success: boolean;
@@ -13,6 +24,7 @@ export type ArticleFormState = {
   errors?: {
     title?: string[];
     imageUrl?: string[];
+    imageKey?: string[];
     content?: string[];
     published?: string[];
     _form?: string[];
@@ -34,6 +46,7 @@ const createArticleSchema = z
       .max(256, "Title must be 256 characters or fewer."),
     content: z.string().trim().min(1, "content is required"),
     imageUrl: z.string().url("enter a valid image URL").optional(),
+    imageKey: z.string().trim().min(1, "image key is required").optional(),
     published: z.boolean(),
   })
   .superRefine((input, ctx) => {
@@ -42,6 +55,14 @@ const createArticleSchema = z
         code: z.ZodIssueCode.custom,
         path: ["imageUrl"],
         message: "published articles require an image",
+      });
+    }
+
+    if (input.published && !input.imageKey) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["imageKey"],
+        message: "published articles require an uploaded image key",
       });
     }
   });
@@ -65,6 +86,7 @@ function getCreateArticleInput(formData: FormData) {
     title: getFormString(formData, "title"),
     content: getFormString(formData, "content"),
     imageUrl: getOptionalFormString(formData, "imageUrl"),
+    imageKey: getOptionalFormString(formData, "imageKey"),
     published: formData.get("published") === "on",
   };
 }
@@ -140,6 +162,7 @@ export async function createArticle(
     content: input.content,
     slug: slug,
     imageUrl: input.imageUrl ?? null,
+    imageKey: input.imageKey ?? null,
     published: input.published,
   });
 
@@ -237,9 +260,18 @@ export async function updateArticle(
       content: input.content,
       slug: newSlug,
       imageUrl: input.imageUrl ?? null,
+      imageKey: input.imageKey ?? null,
       published: input.published,
     })
     .where(eq(articles.id, article.id));
+
+  if (
+    article.imageKey &&
+    input.imageKey &&
+    article.imageKey !== input.imageKey
+  ) {
+    await deleteUploadThingFile(article.imageKey);
+  }
 
   redirect(`/article/${newSlug}?updated=1`);
 }
@@ -252,6 +284,10 @@ export async function deleteArticle(slug: string) {
   }
 
   await db.delete(articles).where(eq(articles.id, article.id));
+
+  if (article.imageKey) {
+    await deleteUploadThingFile(article.imageKey);
+  }
 
   redirect("/");
 }

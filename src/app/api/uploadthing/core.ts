@@ -1,5 +1,4 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
 import { getIsAdmin } from "~/server/better-auth/admin";
 
 const f = createUploadthing();
@@ -18,7 +17,7 @@ export const ourFileRouter = {
     },
   })
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       // This code runs on your server before upload
       const isAdmin = await getIsAdmin();
 
@@ -28,7 +27,7 @@ export const ourFileRouter = {
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {};
     })
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(async () => {
       // This code RUNS ON YOUR SERVER after upload
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return {};

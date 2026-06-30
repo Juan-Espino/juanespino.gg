@@ -21,6 +21,7 @@ type ArticleEditorProps = {
     title: string;
     content: string;
     imageUrl: string | null;
+    imageKey: string | null;
     slug: string;
     published: boolean;
   };
@@ -34,6 +35,7 @@ export default function ArticleEditor({
   const [state, formAction] = useActionState(action, initialArticleFormState);
   const [content, setContent] = useState(initialValues?.content ?? "");
   const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
+  const [imageKey, setImageKey] = useState(initialValues?.imageKey ?? "");
 
   return (
     //TODO:design in shape of article-display
@@ -63,6 +65,7 @@ export default function ArticleEditor({
             </p>
           ))}
           <input type="hidden" name="imageUrl" value={imageUrl} />
+          <input type="hidden" name="imageKey" value={imageKey} />
 
           <textarea
             className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-neon/70 min-h-96 w-full resize-y border-b bg-transparent py-4 font-mono text-sm leading-7 transition-colors duration-200 outline-none lg:min-h-136"
@@ -124,8 +127,10 @@ export default function ArticleEditor({
                 },
               }}
               onClientUploadComplete={(res) => {
-                const uploadedUrl = res[0]?.ufsUrl;
-                if (uploadedUrl) setImageUrl(uploadedUrl);
+                const uploadedFile = res[0];
+
+                if (uploadedFile?.ufsUrl) setImageUrl(uploadedFile.ufsUrl);
+                if (uploadedFile?.key) setImageKey(uploadedFile.key);
               }}
               onUploadError={(error) => {
                 console.error(error);
@@ -133,6 +138,11 @@ export default function ArticleEditor({
             />
           )}
           {state.errors?.imageUrl?.map((error) => (
+            <p key={error} className="text-sm text-red-500!">
+              {error}
+            </p>
+          ))}
+          {state.errors?.imageKey?.map((error) => (
             <p key={error} className="text-sm text-red-500!">
               {error}
             </p>
