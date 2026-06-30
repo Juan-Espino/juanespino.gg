@@ -1,11 +1,12 @@
 "use client";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import MarkdownContent from "./markdown-content";
 import DeleteButton from "./delete-buton";
 import Image from "next/image";
 import { UploadDropzone } from "~/utils/uploadthing";
+import { removeArticleImageAction } from "~/server/actions";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -36,6 +37,31 @@ export default function ArticleEditor({
   const [content, setContent] = useState(initialValues?.content ?? "");
   const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
   const [imageKey, setImageKey] = useState(initialValues?.imageKey ?? "");
+  const [isRemovingImage, startRemovingImage] = useTransition();
+  const [imageRemovalError, setImageRemovalError] = useState<string | null>(
+    null,
+  );
+
+  function handleChangeImage() {
+    if (!imageKey || isRemovingImage) return;
+
+    setImageRemovalError(null);
+
+    startRemovingImage(async () => {
+      const result = await removeArticleImageAction(
+        initialValues?.slug ?? null,
+        imageKey,
+      );
+
+      if (!result.success) {
+        setImageRemovalError(result.message ?? "Failed to remove image");
+        return;
+      }
+
+      setImageUrl("");
+      setImageKey("");
+    });
+  }
 
   return (
     //TODO:design in shape of article-display
@@ -95,16 +121,27 @@ export default function ArticleEditor({
 
         <aside className="sticky top-6 min-w-0 lg:flex lg:flex-col lg:gap-4">
           {imageUrl ? (
-            <div className="aspect-3/2 overflow-hidden lg:rounded-xl">
-              <Image
-                className="h-full w-full object-cover"
-                src={imageUrl}
-                alt="article image preview"
-                width={800}
-                height={533}
-              />{" "}
+            <div className="flex flex-col gap-3">
+              <div className="aspect-3/2 overflow-hidden lg:rounded-xl">
+                <Image
+                  className="h-full w-full object-cover"
+                  src={imageUrl}
+                  alt="article image preview"
+                  width={800}
+                  height={533}
+                />
+              </div>
+              <button
+                type="button"
+                className="border-bloggin-border/40 text-bloggin-muted hover:border-bloggin-accent/70 hover:text-bloggin-foreground disabled:text-bloggin-muted/50 rounded border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
+                disabled={!imageKey || isRemovingImage}
+                onClick={handleChangeImage}
+              >
+                {isRemovingImage ? "removing image..." : "change image"}
+              </button>
             </div>
           ) : (
+            // TODO: shadcn toast is uploadthing gives error from upload
             <UploadDropzone
               endpoint="articleImage"
               className="border-bloggin-border/40 bg-bloggin-background/60 hover:border-bloggin-accent/70 aspect-3/2 rounded-xl border border-dashed px-6 py-8 transition-colors"
@@ -129,6 +166,7 @@ export default function ArticleEditor({
               onClientUploadComplete={(res) => {
                 const uploadedFile = res[0];
 
+                setImageRemovalError(null);
                 if (uploadedFile?.ufsUrl) setImageUrl(uploadedFile.ufsUrl);
                 if (uploadedFile?.key) setImageKey(uploadedFile.key);
               }}
@@ -147,6 +185,9 @@ export default function ArticleEditor({
               {error}
             </p>
           ))}
+          {imageRemovalError ? (
+            <p className="text-sm text-red-500!">{imageRemovalError}</p>
+          ) : null}
           <MarkdownContent
             content={content}
             className="border-bloggin-border/40 rounded border p-4"

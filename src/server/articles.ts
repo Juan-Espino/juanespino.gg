@@ -31,6 +31,11 @@ export type ArticleFormState = {
   };
 };
 
+export type ArticleImageRemovalState = {
+  success: boolean;
+  message?: string;
+};
+
 export type ArticleLinks = {
   title: string;
   slug: string;
@@ -274,6 +279,53 @@ export async function updateArticle(
   }
 
   redirect(`/article/${newSlug}?updated=1`);
+}
+
+export async function removeArticleImage(
+  slug: string | null,
+  imageKey: string,
+): Promise<ArticleImageRemovalState> {
+  if (!(await getIsAdmin())) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!imageKey) {
+    return {
+      success: false,
+      message: "No image to remove",
+    };
+  }
+
+  if (slug) {
+    const article = await getArticleBySlugForAdmin(slug);
+
+    if (!article) {
+      throw new Error("Failed, article does not exist");
+    }
+
+    if (article.imageKey && article.imageKey !== imageKey) {
+      return {
+        success: false,
+        message: "Image has changed. Refresh and try again.",
+      };
+    }
+
+    if (article.imageKey === imageKey) {
+      await db
+        .update(articles)
+        .set({
+          imageUrl: null,
+          imageKey: null,
+        })
+        .where(eq(articles.id, article.id));
+    }
+  }
+
+  await deleteUploadThingFile(imageKey);
+
+  return {
+    success: true,
+  };
 }
 
 export async function deleteArticle(slug: string) {
