@@ -23,7 +23,7 @@ export const ourFileRouter = {
       const isAdmin = await getIsAdmin();
 
       // If you throw, the user will not be able to upload
-      if (!isAdmin) throw new UploadThingError("Unauthorized");
+      if (!isAdmin) throw new Error("Unauthorized");
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {};
