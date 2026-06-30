@@ -3,9 +3,8 @@ import type { Article } from "~/server/db/app-schema";
 import MobileArticleDisplay from "./mobile-article-display";
 import ShareButton from "./share-button";
 import Link from "next/link";
-import DeleteButton from "./delete-buton";
 import Image from "next/image";
-import { formattedDate } from "~/util/helpers";
+import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
 import MarkdownContent from "./markdown-content";
 
@@ -41,7 +40,7 @@ export default function ArticleDisplay({
 
             {article.imageUrl && (
               // TODO:Make sure image here and on mobile are predefined after uploadthing!
-              <div className="float-right ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
+              <div className="float-right mb-8 ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
                 <Image
                   className="h-auto w-full object-cover"
                   src={article.imageUrl}
@@ -65,8 +64,6 @@ export default function ArticleDisplay({
                 <ShareButton slug={article.slug} />
 
                 <Link href={`/edit/${article.slug}`}>edit</Link>
-
-                <DeleteButton slug={article.slug} />
               </div>
             ) : (
               <div className="flex justify-center gap-4">

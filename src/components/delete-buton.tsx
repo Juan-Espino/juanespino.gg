@@ -11,10 +11,12 @@ export default function DeleteButton({ slug }: DeleteButtonProps) {
   // TODO:make this a shadcn alert dialog
   if (confirming) {
     return (
-      <form action={() => deleteArticleAction(slug)}>
+      <form action={deleteArticleAction.bind(null, slug)}>
         <p>delete this article?</p>
         <button type="submit">yes, delete</button>
-        <button onClick={() => setConfirming(false)}>cancle</button>
+        <button type="button" onClick={() => setConfirming(false)}>
+          cancel
+        </button>
       </form>
     );
   }

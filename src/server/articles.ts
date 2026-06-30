@@ -25,16 +25,26 @@ export type ArticleLinks = {
   createdAt: Date;
 };
 
-const createArticleSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1, "title is required")
-    .max(256, "Title must be 256 characters or fewer."),
-  content: z.string().trim().min(1, "content is required"),
-  imageUrl: z.string().url("enter a valid image URL").optional(),
-  published: z.boolean(),
-});
+const createArticleSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, "title is required")
+      .max(256, "Title must be 256 characters or fewer."),
+    content: z.string().trim().min(1, "content is required"),
+    imageUrl: z.string().url("enter a valid image URL").optional(),
+    published: z.boolean(),
+  })
+  .superRefine((input, ctx) => {
+    if (input.published && !input.imageUrl) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["imageUrl"],
+        message: "published articles require an image",
+      });
+    }
+  });
 
 function getFormString(formData: FormData, key: string) {
   const value = formData.get(key);

@@ -1,6 +1,6 @@
 "use client";
 import type { Article } from "~/server/db/app-schema";
-import { formattedDate } from "~/util/helpers";
+import { formattedDate } from "~/utils/helpers";
 import ShareButton from "./share-button";
 import Link from "next/link";
 import DeleteButton from "./delete-buton";

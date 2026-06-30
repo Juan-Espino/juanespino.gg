@@ -5,6 +5,7 @@ import SubmitButton from "./submit-button";
 import MarkdownContent from "./markdown-content";
 import DeleteButton from "./delete-buton";
 import Image from "next/image";
+import { UploadDropzone } from "~/utils/uploadthing";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -32,6 +33,8 @@ export default function ArticleEditor({
 }: ArticleEditorProps) {
   const [state, formAction] = useActionState(action, initialArticleFormState);
   const [content, setContent] = useState(initialValues?.content ?? "");
+  const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
+
   return (
     //TODO:design in shape of article-display
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 lg:max-w-5xl lg:px-6 lg:py-8">
@@ -59,17 +62,8 @@ export default function ArticleEditor({
               {error}
             </p>
           ))}
-          <input
-            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-neon/70 w-full border-b bg-transparent py-3 text-xl font-bold outline-none"
-            name="imageUrl"
-            defaultValue={initialValues?.imageUrl ?? ""}
-            placeholder="image url"
-          />
-          {state.errors?.imageUrl?.map((error) => (
-            <p key={error} className="text-sm text-red-500!">
-              {error}
-            </p>
-          ))}
+          <input type="hidden" name="imageUrl" value={imageUrl} />
+
           <textarea
             className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-neon/70 min-h-96 w-full resize-y border-b bg-transparent py-4 font-mono text-sm leading-7 transition-colors duration-200 outline-none lg:min-h-136"
             name="content"
@@ -96,18 +90,57 @@ export default function ArticleEditor({
           </div>
         </div>
 
-        <aside className="min-w-0 lg:sticky lg:top-6">
-          {/* TODO:add image uploader/preview here */}
-          <div className="aspect-3/2 overflow-hidden lg:rounded-xl">
-            <Image
-              className="h-full w-full object-cover"
-              src="https://i.pinimg.com/736x/b1/c6/8a/b1c68add7057994c22ee16e134f55d8f.jpg"
-              alt="placeholder"
-              width={800}
-              height={533}
+        <aside className="sticky top-6 min-w-0 lg:flex lg:flex-col lg:gap-4">
+          {imageUrl ? (
+            <div className="aspect-3/2 overflow-hidden lg:rounded-xl">
+              <Image
+                className="h-full w-full object-cover"
+                src={imageUrl}
+                alt="article image preview"
+                width={800}
+                height={533}
+              />{" "}
+            </div>
+          ) : (
+            <UploadDropzone
+              endpoint="articleImage"
+              className="border-bloggin-border/40 bg-bloggin-background/60 hover:border-bloggin-accent/70 aspect-3/2 rounded-xl border border-dashed px-6 py-8 transition-colors"
+              appearance={{
+                uploadIcon: "text-bloggin-muted size-10",
+                label:
+                  "text-bloggin-foreground text-sm font-semibold hover:text-bloggin-accent ",
+                allowedContent: "text-bloggin-muted/70 text-xs",
+                button:
+                  "bg-bloggin-accent text-bloggin-background hover:bg-bloggin-foreground h-9 rounded px-4 text-sm font-bold transition-colors disabled:bg-bloggin-muted",
+              }}
+              content={{
+                label: "drop image or click here!",
+                allowedContent: "Images up to 4MB. Recommended 1200 x 800.",
+                button({ ready, isUploading, files }) {
+                  if (!ready) return "loading...";
+                  if (isUploading) return "uploading...";
+                  if (files.length > 0) return `upload ${files.length} image`;
+                  return "waiting for file... ";
+                },
+              }}
+              onClientUploadComplete={(res) => {
+                const uploadedUrl = res[0]?.ufsUrl;
+                if (uploadedUrl) setImageUrl(uploadedUrl);
+              }}
+              onUploadError={(error) => {
+                console.error(error);
+              }}
             />
-          </div>
-          <MarkdownContent content={content} className="rounded p-4" />
+          )}
+          {state.errors?.imageUrl?.map((error) => (
+            <p key={error} className="text-sm text-red-500!">
+              {error}
+            </p>
+          ))}
+          <MarkdownContent
+            content={content}
+            className="border-bloggin-border/40 rounded border p-4"
+          />
         </aside>
       </form>
       {state.errors?._form?.map((error) => (
@@ -115,7 +148,11 @@ export default function ArticleEditor({
           {error}
         </p>
       ))}
-      {initialValues && <DeleteButton slug={initialValues.slug} />}
+      {initialValues && (
+        <div className="flex justify-center">
+          <DeleteButton slug={initialValues.slug} />
+        </div>
+      )}
     </div>
   );
 }
