@@ -22,7 +22,7 @@ const markdownBlockVariants: Variants = {
     opacity: 1,
     clipPath: "inset(0 0% 0 0)",
     transition: {
-      duration: 0.9,
+      duration: 1,
       type: "decay",
     },
   },
@@ -109,7 +109,7 @@ export default function MarkdownContent({
           li: ({ children }) => (
             <motion.li
               variants={markdownBlockVariants}
-              className="text-bloggin-muted mb-3 font-bold underline"
+              className="text-bloggin-muted mb-5 text-lg underline"
             >
               {children}
             </motion.li>

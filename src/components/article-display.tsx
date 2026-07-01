@@ -8,14 +8,7 @@ import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
 import MarkdownContent from "./markdown-content";
 import { useEffect, useRef, useState } from "react";
-import { motion, type Transition } from "motion/react";
-
-const articleLayoutTransition: Transition = {
-  layout: {
-    duration: 0.7,
-    ease: "easeInOut",
-  },
-};
+import { AnimatePresence, motion, type Transition } from "motion/react";
 
 type ArticleDisplayProps = {
   article?: Article;
@@ -36,6 +29,7 @@ export default function ArticleDisplay({
   const collapsedHeight = 360;
   const contentRef = useRef<HTMLDivElement>(null);
   const [canExpand, setCanExpand] = useState(false);
+  const [hasMeasuredContent, setHasMeasuredContent] = useState(false);
   const isExpanded =
     articleSlug !== null && expandedArticleSlug === articleSlug;
   const hasMarkdownAnimated =
@@ -59,6 +53,7 @@ export default function ArticleDisplay({
 
     function updateCanExpand() {
       setCanExpand(measuredContentElement.scrollHeight > collapsedHeight);
+      setHasMeasuredContent(true);
     }
 
     updateCanExpand();
@@ -103,10 +98,13 @@ export default function ArticleDisplay({
             <motion.div
               initial={false}
               animate={{
-                height: isExpanded || !canExpand ? "auto" : collapsedHeight,
+                height:
+                  isExpanded || (hasMeasuredContent && !canExpand)
+                    ? "auto"
+                    : collapsedHeight,
               }}
               transition={{
-                duration: 0.7,
+                duration: 0.8,
                 ease: "easeInOut",
               }}
               className="relative overflow-hidden"
@@ -118,16 +116,21 @@ export default function ArticleDisplay({
                   animated={!hasMarkdownAnimated}
                 />
               </div>
-              {canExpand && !isExpanded ? (
-                <div className="from-bloggin-background pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t to-transparent" />
-              ) : null}
+              <AnimatePresence>
+                {canExpand && !isExpanded ? (
+                  <motion.div
+                    key="article-fade"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="from-bloggin-background pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t to-transparent"
+                  />
+                ) : null}
+              </AnimatePresence>
             </motion.div>
             {isAdmin ? (
-              <motion.div
-                layout
-                transition={articleLayoutTransition}
-                className="mt-4 flex items-center gap-4 px-2"
-              >
+              <div className="mt-4 flex items-center gap-4 px-2">
                 {canExpand ? (
                   <ReadMoreButton
                     expanded={isExpanded}
@@ -143,13 +146,9 @@ export default function ArticleDisplay({
                 <ShareButton slug={article.slug} />
 
                 <Link href={`/edit/${article.slug}`}>edit</Link>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                layout
-                transition={articleLayoutTransition}
-                className="mt-4 flex items-center gap-4 px-2"
-              >
+              <div className="mt-4 flex items-center gap-4 px-2">
                 {canExpand ? (
                   <ReadMoreButton
                     expanded={isExpanded}
@@ -162,7 +161,7 @@ export default function ArticleDisplay({
                 ) : null}
 
                 <ShareButton slug={article.slug} />
-              </motion.div>
+              </div>
             )}
 
             <div className="clear-both" />
