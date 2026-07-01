@@ -76,8 +76,8 @@ export default async function ArticlePage({
         : null;
 
   return (
-    <main className="flex w-full flex-col items-center justify-center">
-      <div>
+    <main className="flex w-full flex-col">
+      <div className="w-full">
         {/* TODO:shadcn this as a toast! */}
         {statusMessage && (
           <div className="border-bloggin-accent/40 bg-bloggin-accent/10 text-bloggin-accent mb-4 rounded border px-4 py-3 text-sm">

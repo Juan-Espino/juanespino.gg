@@ -25,6 +25,7 @@
     "@uploadthing/react": "^7.3.3",
     "better-auth": "^1.6.20",
     "drizzle-orm": "^0.45.2",
+    "motion": "^12.42.2",
     "next": "^15.2.3",
     "postgres": "^3.4.4",
     "react": "^19.0.0",

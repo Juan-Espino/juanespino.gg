@@ -3,7 +3,6 @@ import type { Article } from "~/server/db/app-schema";
 import { formattedDate } from "~/utils/helpers";
 import ShareButton from "./share-button";
 import Link from "next/link";
-import DeleteButton from "./delete-button";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import MarkdownContent from "./markdown-content";
@@ -71,8 +70,6 @@ export default function MobileArticleDisplay({
             <ShareButton slug={article.slug} />
 
             <Link href={`/edit/${article.slug}`}>edit</Link>
-
-            <DeleteButton slug={article.slug} />
           </div>
         ) : (
           <div className="flex justify-center gap-4">

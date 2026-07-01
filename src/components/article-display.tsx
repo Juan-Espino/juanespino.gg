@@ -7,6 +7,15 @@ import Image from "next/image";
 import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
 import MarkdownContent from "./markdown-content";
+import { useEffect, useRef, useState } from "react";
+import { motion, type Transition } from "motion/react";
+
+const articleLayoutTransition: Transition = {
+  layout: {
+    duration: 0.7,
+    ease: "easeInOut",
+  },
+};
 
 type ArticleDisplayProps = {
   article?: Article;
@@ -17,10 +26,31 @@ export default function ArticleDisplay({
   article,
   isAdmin,
 }: ArticleDisplayProps) {
-  //for creating a new article
+  const [isExpanded, setIsExpanded] = useState(false);
+  const collapsedHeight = 360;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [canExpand, setCanExpand] = useState(false);
+
+  useEffect(() => {
+    const contentElement = contentRef.current;
+
+    if (!contentElement) return;
+
+    function updateCanExpand() {
+      setCanExpand(contentElement!.scrollHeight > collapsedHeight);
+    }
+
+    updateCanExpand();
+
+    const resizeObserver = new ResizeObserver(updateCanExpand);
+    resizeObserver.observe(contentElement);
+
+    return () => resizeObserver.disconnect();
+  }, [article?.content]);
+
   if (!article) return null;
   return (
-    <section className="">
+    <section className="w-full">
       <>
         <MobileArticleDisplay
           className={"lg:hidden"}
@@ -28,7 +58,7 @@ export default function ArticleDisplay({
           isAdmin={isAdmin}
         />
         <div className="hidden w-full lg:block">
-          <article>
+          <article className="w-full">
             <header className="border-bloggin-border/40 mb-4 border-b pb-4">
               <h2 className="mb-2 max-w-xl text-4xl font-bold text-balance italic">
                 {article.title}
@@ -39,7 +69,6 @@ export default function ArticleDisplay({
             </header>
 
             {article.imageUrl && (
-              // TODO:Make sure image here and on mobile are predefined after uploadthing!
               <div className="float-right mb-8 ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
                 <Image
                   className="h-auto w-full object-cover"
@@ -50,26 +79,60 @@ export default function ArticleDisplay({
                 />
               </div>
             )}
-            <div className="">
-              <MarkdownContent content={article.content} />
-              {/* TODO:Finish this */}
-              <ReadMoreButton />
-            </div>
-
-            <div className="clear-both" />
-
-            {/* TODO:deterimine if delete button should stay here */}
+            <motion.div
+              initial={false}
+              animate={{
+                height: isExpanded || !canExpand ? "auto" : collapsedHeight,
+              }}
+              transition={{
+                duration: 0.7,
+                ease: "easeInOut",
+              }}
+              className="relative overflow-hidden"
+            >
+              <div ref={contentRef}>
+                <MarkdownContent content={article.content} animated />
+              </div>
+              {canExpand && !isExpanded ? (
+                <div className="from-bloggin-background pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t to-transparent" />
+              ) : null}
+            </motion.div>
             {isAdmin ? (
-              <div className="flex justify-center gap-4">
+              <motion.div
+                layout
+                transition={articleLayoutTransition}
+                className="mt-4 flex items-center gap-4 px-2"
+              >
+                {canExpand ? (
+                  <ReadMoreButton
+                    expanded={isExpanded}
+                    onClick={() => setIsExpanded((value) => !value)}
+                  />
+                ) : null}
+                {/* TODO:Finish this */}
+
                 <ShareButton slug={article.slug} />
 
                 <Link href={`/edit/${article.slug}`}>edit</Link>
-              </div>
+              </motion.div>
             ) : (
-              <div className="flex justify-center gap-4">
+              <motion.div
+                layout
+                transition={articleLayoutTransition}
+                className="mt-4 flex items-center gap-4 px-2"
+              >
+                {canExpand ? (
+                  <ReadMoreButton
+                    expanded={isExpanded}
+                    onClick={() => setIsExpanded((value) => !value)}
+                  />
+                ) : null}
+
                 <ShareButton slug={article.slug} />
-              </div>
+              </motion.div>
             )}
+
+            <div className="clear-both" />
           </article>
         </div>
       </>

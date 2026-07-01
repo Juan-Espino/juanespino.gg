@@ -22,9 +22,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4">
+      <body className="mx-auto flex min-h-screen w-full max-w-5xl flex-col">
         <NavBar className="" />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="flex w-full flex-1 flex-col">{children}</div>
         <Footer className="" />
       </body>
     </html>

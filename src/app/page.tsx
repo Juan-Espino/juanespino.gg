@@ -20,8 +20,8 @@ export default async function Home() {
     );
 
   return (
-    <main className="flex w-full flex-col items-center justify-center">
-      <div>
+    <main className="flex w-full flex-col">
+      <div className="w-full">
         <ArticleDisplay article={article} isAdmin={isAdmin} />
         <LatestArticles latestArticles={latestArticles} />
       </div>
