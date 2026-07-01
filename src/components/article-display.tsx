@@ -26,18 +26,39 @@ export default function ArticleDisplay({
   article,
   isAdmin,
 }: ArticleDisplayProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const articleSlug = article?.slug ?? null;
+  const [expandedArticleSlug, setExpandedArticleSlug] = useState<string | null>(
+    null,
+  );
+  const [animatedArticleSlug, setAnimatedArticleSlug] = useState<string | null>(
+    null,
+  );
   const collapsedHeight = 360;
   const contentRef = useRef<HTMLDivElement>(null);
   const [canExpand, setCanExpand] = useState(false);
+  const isExpanded =
+    articleSlug !== null && expandedArticleSlug === articleSlug;
+  const hasMarkdownAnimated =
+    articleSlug !== null && animatedArticleSlug === articleSlug;
 
+  useEffect(() => {
+    if (!articleSlug || hasMarkdownAnimated) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setAnimatedArticleSlug(articleSlug);
+    }, 1400);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [articleSlug, hasMarkdownAnimated]);
   useEffect(() => {
     const contentElement = contentRef.current;
 
     if (!contentElement) return;
 
+    const measuredContentElement = contentElement;
+
     function updateCanExpand() {
-      setCanExpand(contentElement!.scrollHeight > collapsedHeight);
+      setCanExpand(measuredContentElement.scrollHeight > collapsedHeight);
     }
 
     updateCanExpand();
@@ -91,7 +112,11 @@ export default function ArticleDisplay({
               className="relative overflow-hidden"
             >
               <div ref={contentRef}>
-                <MarkdownContent content={article.content} animated />
+                <MarkdownContent
+                  key={article.slug}
+                  content={article.content}
+                  animated={!hasMarkdownAnimated}
+                />
               </div>
               {canExpand && !isExpanded ? (
                 <div className="from-bloggin-background pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t to-transparent" />
@@ -106,7 +131,11 @@ export default function ArticleDisplay({
                 {canExpand ? (
                   <ReadMoreButton
                     expanded={isExpanded}
-                    onClick={() => setIsExpanded((value) => !value)}
+                    onClick={() =>
+                      setExpandedArticleSlug((currentSlug) =>
+                        currentSlug === article.slug ? null : article.slug,
+                      )
+                    }
                   />
                 ) : null}
                 {/* TODO:Finish this */}
@@ -124,7 +153,11 @@ export default function ArticleDisplay({
                 {canExpand ? (
                   <ReadMoreButton
                     expanded={isExpanded}
-                    onClick={() => setIsExpanded((value) => !value)}
+                    onClick={() =>
+                      setExpandedArticleSlug((currentSlug) =>
+                        currentSlug === article.slug ? null : article.slug,
+                      )
+                    }
                   />
                 ) : null}
 

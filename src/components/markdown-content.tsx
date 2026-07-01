@@ -16,12 +16,10 @@ const markdownContainerVariants = {
 const markdownBlockVariants: Variants = {
   hidden: {
     opacity: 0,
-    x: -8,
     clipPath: "inset(0 100% 0 0)",
   },
   show: {
     opacity: 1,
-    x: 0,
     clipPath: "inset(0 0% 0 0)",
     transition: {
       duration: 0.9,
@@ -34,20 +32,24 @@ type MarkdownContentProps = {
   content: string;
   className?: string;
   animated?: boolean;
+  onAnimationComplete?: () => void;
 };
 export default function MarkdownContent({
   content,
   className,
   animated,
+  onAnimationComplete,
 }: MarkdownContentProps) {
   const shouldReduceMotion = useReducedMotion();
   const shouldAnimate = animated && !shouldReduceMotion;
+
   return (
     <motion.div
       className={className ?? "px-4"}
       variants={markdownContainerVariants}
       initial={shouldAnimate ? "hidden" : false}
       animate={shouldAnimate ? "show" : false}
+      onAnimationComplete={onAnimationComplete}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
