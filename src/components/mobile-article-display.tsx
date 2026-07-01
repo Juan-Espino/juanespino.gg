@@ -3,7 +3,7 @@ import type { Article } from "~/server/db/app-schema";
 import { formattedDate } from "~/utils/helpers";
 import ShareButton from "./share-button";
 import Link from "next/link";
-import DeleteButton from "./delete-buton";
+import DeleteButton from "./delete-button";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import MarkdownContent from "./markdown-content";

@@ -8,14 +8,9 @@ import "./src/env.js";
 const config = {
   images: {
     remotePatterns: [
-      //   TODO:{
-      //   protocol: "https",
-      //   hostname: "ufs.sh",
-      // },
       {
         protocol: "https",
-        hostname: "**",
-        port: "",
+        hostname: "*.ufs.sh",
         pathname: "/**",
       },
     ],

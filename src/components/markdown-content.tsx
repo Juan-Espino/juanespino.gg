@@ -48,6 +48,7 @@ export default function MarkdownContent({
             <img
               src={src}
               className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+              alt="md-image"
             />
           ),
         }}

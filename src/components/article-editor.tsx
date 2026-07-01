@@ -3,7 +3,7 @@ import { useActionState, useState, useTransition } from "react";
 import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import MarkdownContent from "./markdown-content";
-import DeleteButton from "./delete-buton";
+import DeleteButton from "./delete-button";
 import Image from "next/image";
 import { UploadDropzone } from "~/utils/uploadthing";
 import { deleteUploadedImage } from "~/server/actions";
