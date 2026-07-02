@@ -1,0 +1,23 @@
+Bloggin TODOS:
+
+    Formatting the App:
+        [ ] Move the current Bloggin homepage from `/` to `/bloggin`
+        [ ] Move Bloggin routes under `/bloggin`, including articles, article detail, drafts, new, and edit
+        [ ] Move the Bloggin navbar and footer out of the root layout and into a Bloggin-specific layout
+        [ ] Keep the root layout focused on global providers, fonts, metadata defaults, and the toaster
+        [ ] Add shared route helpers for Bloggin URLs so links and redirects are not hard-coded
+        [ ] Update Bloggin navigation links to use `/bloggin` routes
+        [ ] Update article list, latest article, edit, share, create, update, and delete redirects to use `/bloggin` routes
+        [ ] Review auth and UploadThing API routes to make sure they remain root-level API routes
+        [ ] Update public URL environment assumptions so shared article links point to the new Bloggin paths
+        [ ] Update metadata so the app root can represent Juan Espino while Bloggin pages keep Bloggin-specific titles
+        [ ] Run formatting, linting, typecheck, and build after the route restructure
+        [ ] Choose canonical production domain: https://juanespino.gg
+
+        [ ] Redirect www.juanespino.gg to juanespino.gg, or intentionally support both
+        [ ] Change BETTER_AUTH_URL in production to https://juanespino.gg
+        [ ] Update GitHub OAuth callback to https://juanespino.gg/api/auth/callback/github
+        [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL
+        [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug]
+
+    Portfolio Building:
