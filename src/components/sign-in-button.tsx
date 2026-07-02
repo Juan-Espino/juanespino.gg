@@ -1,6 +1,8 @@
 "use client";
 
 import { authClient } from "~/server/better-auth/client";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 type SignInButtonProps = {
   className?: string;
@@ -8,15 +10,25 @@ type SignInButtonProps = {
 
 export default function SignInButton({ className }: SignInButtonProps) {
   return (
-    <button
+    <Button
+      variant="ghost"
       className={className}
       onClick={async () => {
-        await authClient.signIn.social({
-          provider: "github",
+        const toastId = toast.loading("redirecting to GitHub...", {
+          position: "top-center",
         });
+        try {
+          await authClient.signIn.social({
+            provider: "github",
+          });
+        } catch {
+          toast.error("could not start sign in", {
+            id: toastId,
+          });
+        }
       }}
     >
       sign in
-    </button>
+    </Button>
   );
 }

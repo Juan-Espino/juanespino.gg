@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { toast } from "sonner";
 import ArticleDisplay from "~/components/article-display";
+import ArticleStatusToast from "~/components/article-status-toast";
 import LatestArticles from "~/components/latest-articles";
 import {
   getArticleBySlugForAdmin,
@@ -68,22 +70,15 @@ export default async function ArticlePage({
     notFound();
   }
 
-  const statusMessage =
-    created === "1"
-      ? "article created"
-      : updated === "1"
-        ? "article updated"
-        : null;
-
   return (
     <main className="flex w-full flex-col">
       <div className="w-full">
-        {/* TODO:shadcn this as a toast! */}
-        {statusMessage && (
-          <div className="border-bloggin-accent/40 bg-bloggin-accent/10 text-bloggin-accent mb-4 rounded border px-4 py-3 text-sm">
-            {statusMessage}
-          </div>
-        )}
+        {
+          <ArticleStatusToast
+            created={created === "1"}
+            updated={updated === "1"}
+          />
+        }
         <ArticleDisplay article={article} isAdmin={isAdmin} />
         <LatestArticles latestArticles={latestArticles} />
       </div>

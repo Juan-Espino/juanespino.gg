@@ -340,7 +340,7 @@ export async function deleteArticle(slug: string) {
     await deleteUploadThingFile(article.imageKey);
   }
 
-  redirect("/");
+  redirect(`/?deleted=1`);
 }
 
 //for 'all' articles page

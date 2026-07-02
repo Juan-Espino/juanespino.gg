@@ -2,10 +2,10 @@
 import type { Article } from "~/server/db/app-schema";
 import { formattedDate } from "~/utils/helpers";
 import ShareButton from "./share-button";
-import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import MarkdownContent from "./markdown-content";
+import EditButton from "./edit-button";
 
 type MobileArticleDisplayProps = {
   className: string;
@@ -68,8 +68,7 @@ export default function MobileArticleDisplay({
         {isAdmin ? (
           <div className="flex justify-center gap-4">
             <ShareButton slug={article.slug} />
-
-            <Link href={`/edit/${article.slug}`}>edit</Link>
+            <EditButton slug={article.slug} />
           </div>
         ) : (
           <div className="flex justify-center gap-4">

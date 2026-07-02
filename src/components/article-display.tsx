@@ -2,13 +2,14 @@
 import type { Article } from "~/server/db/app-schema";
 import MobileArticleDisplay from "./mobile-article-display";
 import ShareButton from "./share-button";
-import Link from "next/link";
 import Image from "next/image";
 import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
 import MarkdownContent from "./markdown-content";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
+import { Button } from "./ui/button";
+import EditButton from "./edit-button";
 
 type ArticleDisplayProps = {
   article?: Article;
@@ -141,11 +142,10 @@ export default function ArticleDisplay({
                     }
                   />
                 ) : null}
-                {/* TODO:Finish this */}
 
                 <ShareButton slug={article.slug} />
 
-                <Link href={`/edit/${article.slug}`}>edit</Link>
+                <EditButton slug={article.slug} />
               </div>
             ) : (
               <div className="mt-4 flex items-center gap-4 px-2">
