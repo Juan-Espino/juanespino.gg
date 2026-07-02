@@ -55,6 +55,12 @@
 html {
   color-scheme: dark;
   scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
+
+body[data-scroll-locked] {
+  margin-right: auto !important;
+  padding-right: 0 !important;
 }
 
 body {

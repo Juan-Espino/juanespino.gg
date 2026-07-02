@@ -9,7 +9,6 @@ import { Toaster } from "~/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
-// TODO:change title and public favicon
 export const metadata: Metadata = {
   title: "bloggin",
   description: "created for the sole purpose of human expression",
@@ -26,10 +25,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn(geist.variable, "font-sans", inter.variable)}>
-      <body className="mx-auto flex min-h-screen w-full max-w-5xl flex-col">
-        <NavBar className="" />
-        <div className="flex w-full flex-1 flex-col">{children}</div>
-        <Footer className="" />
+      <body className="min-h-screen">
+        <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col">
+          <NavBar className="" />
+          <div className="flex w-full flex-1 flex-col">{children}</div>
+          <Footer className="" />
+        </div>
+
         <Toaster />
       </body>
     </html>

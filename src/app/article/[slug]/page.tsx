@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { toast } from "sonner";
 import ArticleDisplay from "~/components/article-display";
 import ArticleStatusToast from "~/components/article-status-toast";
 import LatestArticles from "~/components/latest-articles";
@@ -73,12 +72,11 @@ export default async function ArticlePage({
   return (
     <main className="flex w-full flex-col">
       <div className="w-full">
-        {
-          <ArticleStatusToast
-            created={created === "1"}
-            updated={updated === "1"}
-          />
-        }
+        <ArticleStatusToast
+          created={created === "1"}
+          updated={updated === "1"}
+        />
+
         <ArticleDisplay article={article} isAdmin={isAdmin} />
         <LatestArticles latestArticles={latestArticles} />
       </div>

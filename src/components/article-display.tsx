@@ -7,8 +7,7 @@ import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
 import MarkdownContent from "./markdown-content";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, type Transition } from "motion/react";
-import { Button } from "./ui/button";
+import { AnimatePresence, motion } from "motion/react";
 import EditButton from "./edit-button";
 
 type ArticleDisplayProps = {
@@ -134,6 +133,7 @@ export default function ArticleDisplay({
               <div className="mt-4 flex items-center gap-4 px-2">
                 {canExpand ? (
                   <ReadMoreButton
+                    slug={article.slug}
                     expanded={isExpanded}
                     onClick={() =>
                       setExpandedArticleSlug((currentSlug) =>
@@ -151,6 +151,7 @@ export default function ArticleDisplay({
               <div className="mt-4 flex items-center gap-4 px-2">
                 {canExpand ? (
                   <ReadMoreButton
+                    slug={article.slug}
                     expanded={isExpanded}
                     onClick={() =>
                       setExpandedArticleSlug((currentSlug) =>

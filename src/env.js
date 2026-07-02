@@ -30,6 +30,8 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_BLOGGIN_URL: z.string().url(),
+    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url(),
   },
 
   /**
@@ -47,6 +49,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_BLOGGIN_URL: process.env.NEXT_PUBLIC_BLOGGIN_URL,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:
+      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

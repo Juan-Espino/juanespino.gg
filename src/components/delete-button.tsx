@@ -1,10 +1,8 @@
 "use client";
-import { useState } from "react";
 import { deleteArticleAction } from "~/server/actions";
 import { Button } from "./ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -40,7 +38,10 @@ export default function DeleteButton({ slug }: DeleteButtonProps) {
           <AlertDialogCancel className="w-full" variant="outline">
             cancel
           </AlertDialogCancel>
-          <form action={deleteArticleAction.bind(null, slug)}>
+          <form
+            className="w-full"
+            action={deleteArticleAction.bind(null, slug)}
+          >
             <Button className="w-full" type="submit" variant="destructive">
               yes, delete
             </Button>
