@@ -2,6 +2,7 @@ import { env } from "~/env";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import posthog from "posthog-js";
+import { blogginRoutes } from "~/lib/routes";
 
 type ShareButtonProps = {
   slug: string;
@@ -16,7 +17,10 @@ export default function ShareButton({ slug }: ShareButtonProps) {
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(
-            `${env.NEXT_PUBLIC_BLOGGIN_URL}article/${slug}`,
+            new URL(
+              blogginRoutes.article(slug),
+              env.NEXT_PUBLIC_SITE_URL,
+            ).toString(),
           );
           posthog.capture("article_shared", {
             slug,

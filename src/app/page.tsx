@@ -1,37 +1,23 @@
-import { getLatestPublishedArticles } from "~/server/articles";
-import { getIsAdmin } from "~/server/better-auth/admin";
+import Link from "next/link";
+import { blogginRoutes } from "~/lib/routes";
 
-import ArticleDisplay from "../components/article-display";
-import LatestArticles from "../components/latest-articles";
-import NoContent from "../components/no-content";
-import ArticleStatusToast from "~/components/article-status-toast";
-
-type HomeProps = {
-  searchParams: Promise<{
-    deleted?: string;
-  }>;
-};
-export default async function Home({ searchParams }: HomeProps) {
-  const { deleted } = await searchParams;
-  const articles = await getLatestPublishedArticles(10);
-  const isAdmin = await getIsAdmin();
-  const [article, ...latestArticles] = articles;
-
-  if (!article)
-    return (
-      <main className="flex flex-1 flex-col">
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <NoContent />
-        </div>
-      </main>
-    );
-
+export default function Home() {
   return (
-    <main className="flex w-full flex-col">
-      <div className="w-full">
-        <ArticleStatusToast deleted={deleted === "1"} />
-        <ArticleDisplay article={article} isAdmin={isAdmin} />
-        <LatestArticles latestArticles={latestArticles} />
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 py-16 text-center">
+      <div className="w-full max-w-xl">
+        <p className="text-bloggin-muted text-sm font-semibold tracking-[0.2em] uppercase">
+          Portfolio
+        </p>
+        <h1 className="mt-4 text-4xl font-bold sm:text-6xl">Juan Espino</h1>
+        <p className="text-bloggin-muted mt-5 text-base leading-7 sm:text-lg">
+          Portfolio coming soon.
+        </p>
+        <Link
+          href={blogginRoutes.home}
+          className="border-bloggin-border/60 text-bloggin-foreground hover:border-bloggin-accent hover:text-bloggin-accent focus-visible:border-bloggin-accent focus-visible:text-bloggin-accent mt-8 inline-flex rounded-lg border px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-none"
+        >
+          Read Bloggin
+        </Link>
       </div>
     </main>
   );

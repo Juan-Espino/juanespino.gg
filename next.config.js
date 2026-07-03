@@ -15,6 +15,35 @@ const config = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/articles",
+        destination: "/bloggin/articles",
+        permanent: true,
+      },
+      {
+        source: "/article/:slug",
+        destination: "/bloggin/article/:slug",
+        permanent: true,
+      },
+      {
+        source: "/drafts",
+        destination: "/bloggin/drafts",
+        permanent: true,
+      },
+      {
+        source: "/new",
+        destination: "/bloggin/new",
+        permanent: true,
+      },
+      {
+        source: "/edit/:slug",
+        destination: "/bloggin/edit/:slug",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default config;

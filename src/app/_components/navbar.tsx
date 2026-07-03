@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SignInButton from "~/components/sign-in-button";
 import SignOutButton from "~/components/sign-out-button";
+import { blogginRoutes } from "~/lib/routes";
 import { getIsAdmin } from "~/server/better-auth/admin";
 import { getSession } from "~/server/better-auth/server";
 
@@ -17,13 +18,13 @@ export default async function NavBar({ className }: NavBarProps) {
     >
       <div className="flex items-center gap-5">
         <Link
-          href="/"
+          href={blogginRoutes.home}
           className="text-bloggin-foreground hover:text-bloggin-accent focus-visible:text-bloggin-accent transition-colors focus-visible:outline-none"
         >
           bloggin
         </Link>
         <Link
-          href="/articles"
+          href={blogginRoutes.articles}
           className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
         >
           all articles
@@ -40,13 +41,13 @@ export default async function NavBar({ className }: NavBarProps) {
         {isAdmin && (
           <>
             <Link
-              href="/drafts"
+              href={blogginRoutes.drafts}
               className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
             >
               drafts
             </Link>
             <Link
-              href="/new"
+              href={blogginRoutes.new}
               className="text-bloggin-accent hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
             >
               new+

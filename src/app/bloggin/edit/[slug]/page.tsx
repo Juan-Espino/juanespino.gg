@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import ArticleEditor from "~/components/article-editor";
+import { blogginRoutes } from "~/lib/routes";
 import { getArticleBySlugForAdmin, updateArticle } from "~/server/articles";
 import { getIsAdmin } from "~/server/better-auth/admin";
 
@@ -14,7 +15,7 @@ export default async function EditArticlePage({
   const isAdmin = await getIsAdmin();
 
   if (!isAdmin) {
-    redirect("/");
+    redirect(blogginRoutes.home);
   }
 
   const { slug } = await params;
