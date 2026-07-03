@@ -3,6 +3,7 @@
 import { authClient } from "~/server/better-auth/client";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { blogginRoutes } from "~/lib/routes";
 
 type SignInButtonProps = {
   className?: string;
@@ -20,6 +21,7 @@ export default function SignInButton({ className }: SignInButtonProps) {
         try {
           await authClient.signIn.social({
             provider: "github",
+            callbackURL: blogginRoutes.home,
           });
         } catch {
           toast.error("could not start sign in", {

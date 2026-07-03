@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { db } from "./db";
 import { and, desc, eq, ne } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
+import { blogginRoutes } from "~/lib/routes";
 
 const utapi = new UTApi();
 
@@ -171,7 +172,7 @@ export async function createArticle(
     published: input.published,
   });
 
-  redirect(`/article/${slug}?created=1`);
+  redirect(`${blogginRoutes.article(slug)}?created=1`);
 }
 
 export async function getRecentPublishedArticle() {
@@ -277,7 +278,7 @@ export async function updateArticle(
     await deleteUploadThingFile(previousImageKey);
   }
 
-  redirect(`/article/${newSlug}?updated=1`);
+  redirect(`${blogginRoutes.article(newSlug)}?updated=1`);
 }
 
 export async function removeArticleImage(
@@ -340,7 +341,7 @@ export async function deleteArticle(slug: string) {
     await deleteUploadThingFile(article.imageKey);
   }
 
-  redirect(`/?deleted=1`);
+  redirect(`${blogginRoutes.home}?deleted=1`);
 }
 
 //for 'all' articles page

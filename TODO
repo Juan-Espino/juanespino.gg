@@ -164,13 +164,37 @@ Bloggin TODOS:
         ✔ [ ] Add better error states @done(26-07-01 13:33)
         - [ ] SAFARI FIX !!!!!!!!!!!
         ✔ [ ] Add loading states for form submissions @done(26-07-01 17:47)
-        - [ ] Add README setup instructions
-        - [ ] Document required environment variables
-        - [ ] Document local development workflow
-        - [ ] Document deployment workflow
+        ✔ [ ] Add README setup instructions @done(26-07-02 19:43)
+        ✔ [ ] Document required environment variables @done(26-07-02 19:43)
+        ✔ [ ] Document local development workflow @done(26-07-02 19:43)
+        ✔ [ ] Document deployment workflow @done(26-07-02 19:43)
         ✔ [ ] ADD POSTHOGGGGGG!!!!!!!!!!!!!!!! @done(26-07-01 19:49)
 
 
     Future Upgrade:
         - [ ] Fetch article summaries separately from full article content
         - [ ] don't allow images to be uploaded to uploadthing untill article is save/created
+
+    Bloggin TODOS:
+
+        Formatting the App:
+            ✔ [ ] Move the current Bloggin homepage from `/` to `/bloggin` @done(26-07-02 19:43)
+            ✔ [ ] Move Bloggin routes under `/bloggin`, including articles, article detail, drafts,new, and edit @done(26-07-02 19:54)
+            ✔ [ ] Move the Bloggin navbar and footer out of the root layout and into aBloggin-specific layout @done(26-07-02 19:43)
+            ✔ [ ] Keep the root layout focused on global providers, fonts, metadata defaults, and thetoaster @done(26-07-02 19:54)
+            ✔ [ ] Add shared route helpers for Bloggin URLs so links and redirects are not hard-coded @done(26-07-02 19:54)
+            ✔ [ ] Update Bloggin navigation links to use `/bloggin` routes @done(26-07-02 20:05)
+            - [ ] Update article list, latest article, edit, share, create, update, and deleteredirects to use `/bloggin` routes
+            - [ ] Review auth and UploadThing API routes to make sure they remain root-level APIroutes
+            - [ ] Update public URL environment assumptions so shared article links point to the newBloggin paths
+            - [ ] Update metadata so the app root can represent Juan Espino while Bloggin pages keepBloggin-specific titles
+            - [ ] Run formatting, linting, typecheck, and build after the route restructure
+            - [ ] Choose canonical production domain: https://juanespino.gg
+            - [ ] Redirect www.juanespino.gg to juanespino.gg,
+            - [ ] Change BETTER_AUTH_URL in production to https://juanespino.gg
+            - [ ] Update GitHub OAuth callback to https://juanespino.gg/api/auth/callback/github
+            - [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL
+            - [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug]
+                - 
+        Portfolio Building:
+            - [ ]

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { blogginRoutes } from "~/lib/routes";
 import type { Article } from "~/server/db/app-schema";
 
 type LatestArticlesProps = {
@@ -15,7 +16,7 @@ function LatestArticleCard({
 }) {
   return (
     <Link
-      href={`/article/${article.slug}`}
+      href={blogginRoutes.article(article.slug)}
       tabIndex={duplicate ? -1 : undefined}
       className="group w-48 shrink-0 sm:w-56"
     >

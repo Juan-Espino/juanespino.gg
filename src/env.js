@@ -29,7 +29,7 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
-    NEXT_PUBLIC_BLOGGIN_URL: z.string().url(),
+    NEXT_PUBLIC_SITE_URL: z.string().url(),
     NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().min(1),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().url(),
   },
@@ -47,7 +47,7 @@ export const env = createEnv({
       process.env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_BLOGGIN_URL: process.env.NEXT_PUBLIC_BLOGGIN_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:
       process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
