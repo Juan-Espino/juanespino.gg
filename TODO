@@ -184,17 +184,16 @@ Bloggin TODOS:
             ✔ [ ] Keep the root layout focused on global providers, fonts, metadata defaults, and thetoaster @done(26-07-02 19:54)
             ✔ [ ] Add shared route helpers for Bloggin URLs so links and redirects are not hard-coded @done(26-07-02 19:54)
             ✔ [ ] Update Bloggin navigation links to use `/bloggin` routes @done(26-07-02 20:05)
-            - [ ] Update article list, latest article, edit, share, create, update, and deleteredirects to use `/bloggin` routes
-            - [ ] Review auth and UploadThing API routes to make sure they remain root-level APIroutes
-            - [ ] Update public URL environment assumptions so shared article links point to the newBloggin paths
+            ✔ [ ] Update article list, latest article, edit, share, create, update, and deleteredirects to use `/bloggin` routes @done(26-07-03 13:04)
+            ✔ [ ] Review auth and UploadThing API routes to make sure they remain root-level APIroutes @done(26-07-03 13:05)
+            ✔ [ ] Update public URL environment assumptions so shared article links point to the newBloggin paths @done(26-07-03 13:05)
             - [ ] Update metadata so the app root can represent Juan Espino while Bloggin pages keepBloggin-specific titles
-            - [ ] Run formatting, linting, typecheck, and build after the route restructure
+            ✔ [ ] Run formatting, linting, typecheck, and build after the route restructure @done(26-07-03 13:05)
             - [ ] Choose canonical production domain: https://juanespino.gg
             - [ ] Redirect www.juanespino.gg to juanespino.gg,
             - [ ] Change BETTER_AUTH_URL in production to https://juanespino.gg
             - [ ] Update GitHub OAuth callback to https://juanespino.gg/api/auth/callback/github
-            - [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL
-            - [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug]
-                - 
+            ✔ [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL @done(26-07-03 13:05)
+            ✔ [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug] @done(26-07-03 13:05)
         Portfolio Building:
             - [ ]
