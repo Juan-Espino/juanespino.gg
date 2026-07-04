@@ -1,0 +1,7 @@
+export default function PortfolioStatueStage() {
+  return (
+    <section className="border-bloggin-border/30 text-bloggin-muted flex aspect-4/5 min-h-96 items-center justify-center border">
+      Canvas
+    </section>
+  );
+}

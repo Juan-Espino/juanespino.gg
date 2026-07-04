@@ -171,10 +171,6 @@ Bloggin TODOS:
         ✔ [ ] ADD POSTHOGGGGGG!!!!!!!!!!!!!!!! @done(26-07-01 19:49)
 
 
-    Future Upgrade:
-        - [ ] Fetch article summaries separately from full article content
-        - [ ] don't allow images to be uploaded to uploadthing untill article is save/created
-
     Bloggin TODOS:
 
         Formatting the App:
@@ -195,5 +191,36 @@ Bloggin TODOS:
             - [ ] Update GitHub OAuth callback to https://juanespino.gg/api/auth/callback/github
             ✔ [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL @done(26-07-03 13:05)
             ✔ [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug] @done(26-07-03 13:05)
-        Portfolio Building:
-            - [ ]
+
+        Portfolio-Hero:
+            - [ ] Build the static hero layout shell
+            ✔ [ ] Add a dedicated portfolio component folder @done(26-07-03 13:48)
+            ✔ [ ] Add the hero text column @done(26-07-03 13:48)
+            - [ ] Add a reserved visual canvas area for the statue
+            - [ ] Add the ash background canvas layer
+            - [ ] Build a minimum dotted statue canvas
+            - [ ] Add hover/tap break interaction
+            - [ ] Add smooth reform animation
+            - [ ] Add reduced-motion behavior
+            - [ ] Tune responsive layout for desktop and mobile
+            - [ ] Run typecheck, lint, and build
+            
+            MVP Visual System:
+                - [ ] Start with Canvas 2D, no new packages
+                - [ ] Keep animation state outside React state
+                - [ ] Cap device pixel ratio
+                - [ ] Use fewer particles on mobile
+                - [ ] Verify readability over the ash layer
+
+            Polish:
+                - [ ] Tune particle density
+                - [ ] Tune ash drift and depth
+                - [ ] Tune statue shimmer
+                - [ ] Add final hero copy and links
+
+
+    Future Upgrade:
+        - [ ] Auto crop image before uploadthing
+        - [ ] Different Motion Animation for latest articles
+        - [ ] Fetch article summaries separately from full article content
+        - [ ] don't allow images to be uploaded to uploadthing untill article is save/created

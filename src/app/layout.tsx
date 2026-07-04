@@ -25,7 +25,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={cn(geist.variable, "font-sans", inter.variable)}>
+    <html
+      lang="en"
+      className={
+        cn(geist.variable, "font-sans", inter.variable) + " scrollbar-none!"
+      }
+    >
       <body className="min-h-screen">
         {children}
         <Toaster />
