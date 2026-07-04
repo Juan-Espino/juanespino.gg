@@ -136,7 +136,7 @@ export default function AshFieldCanvas() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let particles = createParticles(width, height);
+    const particles = createParticles(width, height);
     let animationFrameId: number | null = null;
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
