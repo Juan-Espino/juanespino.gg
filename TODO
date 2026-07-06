@@ -171,10 +171,6 @@ Bloggin TODOS:
         ✔ [ ] ADD POSTHOGGGGGG!!!!!!!!!!!!!!!! @done(26-07-01 19:49)
 
 
-    Future Upgrade:
-        - [ ] Fetch article summaries separately from full article content
-        - [ ] don't allow images to be uploaded to uploadthing untill article is save/created
-
     Bloggin TODOS:
 
         Formatting the App:
@@ -184,17 +180,53 @@ Bloggin TODOS:
             ✔ [ ] Keep the root layout focused on global providers, fonts, metadata defaults, and thetoaster @done(26-07-02 19:54)
             ✔ [ ] Add shared route helpers for Bloggin URLs so links and redirects are not hard-coded @done(26-07-02 19:54)
             ✔ [ ] Update Bloggin navigation links to use `/bloggin` routes @done(26-07-02 20:05)
-            - [ ] Update article list, latest article, edit, share, create, update, and deleteredirects to use `/bloggin` routes
-            - [ ] Review auth and UploadThing API routes to make sure they remain root-level APIroutes
-            - [ ] Update public URL environment assumptions so shared article links point to the newBloggin paths
+            ✔ [ ] Update article list, latest article, edit, share, create, update, and deleteredirects to use `/bloggin` routes @done(26-07-03 13:04)
+            ✔ [ ] Review auth and UploadThing API routes to make sure they remain root-level APIroutes @done(26-07-03 13:05)
+            ✔ [ ] Update public URL environment assumptions so shared article links point to the newBloggin paths @done(26-07-03 13:05)
             - [ ] Update metadata so the app root can represent Juan Espino while Bloggin pages keepBloggin-specific titles
-            - [ ] Run formatting, linting, typecheck, and build after the route restructure
+            ✔ [ ] Run formatting, linting, typecheck, and build after the route restructure @done(26-07-03 13:05)
             - [ ] Choose canonical production domain: https://juanespino.gg
             - [ ] Redirect www.juanespino.gg to juanespino.gg,
             - [ ] Change BETTER_AUTH_URL in production to https://juanespino.gg
             - [ ] Update GitHub OAuth callback to https://juanespino.gg/api/auth/callback/github
-            - [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL
-            - [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug]
-                - 
-        Portfolio Building:
-            - [ ]
+            ✔ [ ] Replace NEXT_PUBLIC_BLOGGIN_URL with a more general NEXT_PUBLIC_SITE_URL @done(26-07-03 13:05)
+            ✔ [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug] @done(26-07-03 13:05)
+
+        Portfolio-Hero:
+            ✔ [ ] Build the static hero layout shell @done(26-07-05 08:33)
+            ✔ [ ] Add a dedicated portfolio component folder @done(26-07-03 13:48)
+            ✔ [ ] Add the hero text column @done(26-07-03 13:48)
+            ✔ [ ] Add a reserved visual canvas area for the statue @done(26-07-05 08:33)
+            ✔ [ ] Add the ash background canvas layer @done(26-07-05 08:33)
+            ✔ [ ] Build a minimum dotted statue canvas @done(26-07-05 08:33)
+            ✔ [ ] Add hover/tap break interaction @done(26-07-06 16:06)
+            ✔ [ ] Add smooth reform animation @done(26-07-06 16:06)
+            ✔ [ ] Add reduced-motion behavior @done(26-07-06 16:06)
+            ✔ [ ] Tune responsive layout for desktop and mobile @done(26-07-06 16:06)
+            ✔ [ ] Run typecheck, lint, and build @done(26-07-06 16:06)
+            - [ ] Add in & out page animation for text 
+                - [ ] all text has no height and pops up, shrinks when page changes
+            ✔ [ ] Add in animation for statue @done(26-07-06 16:06)
+            - [ ] Build nav with these links/pages
+                - [ ] projects
+                - [ ] technologies 
+            
+            MVP Visual System:
+                ✔ [ ] Start with Canvas 2D, no new packages @done(26-07-06 16:06)
+                ✔ [ ] Keep animation state outside React state @done(26-07-06 16:06)
+                ✔ [ ] Cap device pixel ratio @done(26-07-06 16:06)
+                ✔ [ ] Use fewer particles on mobile @done(26-07-06 16:06)
+                - [ ] Verify readability over the ash layer
+
+            Polish:
+                ✔ [ ] Tune particle density @done(26-07-06 16:07)
+                ✔ [ ] Tune ash drift and depth @done(26-07-06 16:07)
+                ✔ [ ] Tune statue shimmer @done(26-07-06 16:07)
+                ✔ [ ] Add final hero copy and links @done(26-07-06 16:07)
+
+
+    Future Upgrade:
+        - [ ] Auto crop image before uploadthing
+        - [ ] Different Motion Animation for latest articles
+        - [ ] Fetch article summaries separately from full article content
+        - [ ] don't allow images to be uploaded to uploadthing untill article is save/created
