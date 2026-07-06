@@ -193,30 +193,36 @@ Bloggin TODOS:
             ✔ [ ] Build shared URL helpers so article shares generate https://juanespino.gg/bloggin/article/[slug] @done(26-07-03 13:05)
 
         Portfolio-Hero:
-            - [ ] Build the static hero layout shell
+            ✔ [ ] Build the static hero layout shell @done(26-07-05 08:33)
             ✔ [ ] Add a dedicated portfolio component folder @done(26-07-03 13:48)
             ✔ [ ] Add the hero text column @done(26-07-03 13:48)
-            - [ ] Add a reserved visual canvas area for the statue
-            - [ ] Add the ash background canvas layer
-            - [ ] Build a minimum dotted statue canvas
-            - [ ] Add hover/tap break interaction
-            - [ ] Add smooth reform animation
-            - [ ] Add reduced-motion behavior
-            - [ ] Tune responsive layout for desktop and mobile
-            - [ ] Run typecheck, lint, and build
+            ✔ [ ] Add a reserved visual canvas area for the statue @done(26-07-05 08:33)
+            ✔ [ ] Add the ash background canvas layer @done(26-07-05 08:33)
+            ✔ [ ] Build a minimum dotted statue canvas @done(26-07-05 08:33)
+            ✔ [ ] Add hover/tap break interaction @done(26-07-06 16:06)
+            ✔ [ ] Add smooth reform animation @done(26-07-06 16:06)
+            ✔ [ ] Add reduced-motion behavior @done(26-07-06 16:06)
+            ✔ [ ] Tune responsive layout for desktop and mobile @done(26-07-06 16:06)
+            ✔ [ ] Run typecheck, lint, and build @done(26-07-06 16:06)
+            - [ ] Add in & out page animation for text 
+                - [ ] all text has no height and pops up, shrinks when page changes
+            ✔ [ ] Add in animation for statue @done(26-07-06 16:06)
+            - [ ] Build nav with these links/pages
+                - [ ] projects
+                - [ ] technologies 
             
             MVP Visual System:
-                - [ ] Start with Canvas 2D, no new packages
-                - [ ] Keep animation state outside React state
-                - [ ] Cap device pixel ratio
-                - [ ] Use fewer particles on mobile
+                ✔ [ ] Start with Canvas 2D, no new packages @done(26-07-06 16:06)
+                ✔ [ ] Keep animation state outside React state @done(26-07-06 16:06)
+                ✔ [ ] Cap device pixel ratio @done(26-07-06 16:06)
+                ✔ [ ] Use fewer particles on mobile @done(26-07-06 16:06)
                 - [ ] Verify readability over the ash layer
 
             Polish:
-                - [ ] Tune particle density
-                - [ ] Tune ash drift and depth
-                - [ ] Tune statue shimmer
-                - [ ] Add final hero copy and links
+                ✔ [ ] Tune particle density @done(26-07-06 16:07)
+                ✔ [ ] Tune ash drift and depth @done(26-07-06 16:07)
+                ✔ [ ] Tune statue shimmer @done(26-07-06 16:07)
+                ✔ [ ] Add final hero copy and links @done(26-07-06 16:07)
 
 
     Future Upgrade:

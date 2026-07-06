@@ -12,6 +12,10 @@ type AshParticle = {
   depthSpeed: number;
   pushX: number;
   pushY: number;
+  shape: "dust" | "flake";
+  rotation: number;
+  rotationSpeed: number;
+  length: number;
 };
 
 export default function AshFieldCanvas() {
@@ -48,22 +52,35 @@ export default function AshFieldCanvas() {
       startAnimation();
     }
 
+    function getAshShape() {
+      return Math.random() < 0.02 ? "flake" : "dust";
+    }
+
+    function getAshSize() {
+      return 0.4 + Math.random() * 0.1;
+    }
+
     function createParticles(width: number, height: number): AshParticle[] {
-      const particleCount = Math.round((width * height) / 9000);
+      const particleCount = Math.round((width * height) / 7000);
 
       return Array.from({ length: particleCount }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: 0.4 + Math.random() * 1.8,
+        size: getAshSize(),
         opacity: 0.08 + Math.random() * 0.22,
 
         vx: -0.08 + Math.random() * 0.22,
 
         vy: -0.03 + Math.random() * 0.12,
+
         depth: Math.random(),
         depthSpeed: 0.0008 + Math.random() * 0.002,
         pushX: Math.cos(Math.random() * Math.PI * 2) * 0.08,
         pushY: Math.sin(Math.random() * Math.PI * 2) * 0.08,
+        shape: getAshShape(),
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: -0.003 + Math.random() * 0.006,
+        length: 8 + Math.random() * 18,
       }));
     }
 
@@ -79,10 +96,29 @@ export default function AshFieldCanvas() {
         const size = particle.size * depthScale;
         const opacity = particle.opacity * (0.35 + visualDepth * 0.9);
 
-        context.beginPath();
-        context.fillStyle = `rgba(235, 235, 225, ${opacity})`;
-        context.arc(particle.x, particle.y, size, 0, Math.PI * 2);
-        context.fill();
+        if (particle.shape === "flake") {
+          context.save();
+          context.translate(particle.x, particle.y);
+          context.rotate(particle.rotation);
+
+          context.beginPath();
+          context.fillStyle = `rgba(225, 225, 214, ${opacity * 0.75})`;
+          context.roundRect(
+            -size * 0.35,
+            -length / 2,
+            size * 0.7,
+            -particle.length / 2,
+            size,
+          );
+          context.fill();
+
+          context.restore();
+        } else {
+          context.beginPath();
+          context.fillStyle = `rgba(235, 235, 225, ${opacity})`;
+          context.arc(particle.x, particle.y, size, 0, Math.PI * 2);
+          context.fill();
+        }
       }
     }
 
@@ -96,6 +132,7 @@ export default function AshFieldCanvas() {
 
       for (const particle of particles) {
         particle.depth += particle.depthSpeed;
+        particle.rotation += particle.rotationSpeed;
 
         const visualDepth = Math.min(particle.depth, 1);
         const depthVelocity = 0.2 + visualDepth * 0.8;
@@ -123,13 +160,17 @@ export default function AshFieldCanvas() {
           particle.x = Math.random() * width;
           particle.y = Math.random() * height;
           particle.depth = 0;
-          particle.size = 0.4 + Math.random() * 1.8;
+          particle.size = getAshSize();
           particle.opacity = 0.06 + Math.random() * 0.18;
           particle.vx = -0.08 + Math.random() * 0.22;
           particle.vy = -0.03 + Math.random() * 0.12;
           particle.depthSpeed = 0.0008 + Math.random() * 0.002;
           particle.pushX = Math.cos(Math.random() * Math.PI * 2) * 0.08;
           particle.pushY = Math.sin(Math.random() * Math.PI * 2) * 0.08;
+          particle.shape = getAshShape();
+          particle.rotation = Math.random() * Math.PI * 2;
+          particle.rotationSpeed = -0.003 + Math.random() * 0.006;
+          particle.length = 8 + Math.random() * 18;
         }
       }
     }
