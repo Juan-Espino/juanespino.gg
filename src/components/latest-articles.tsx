@@ -51,7 +51,7 @@ export default function LatestArticles({
     <section
       data-mobile-marquee={hasMobileMarquee}
       data-desktop-marquee={hasDesktopMarquee}
-      className="bg-bloggin-border/10 mt-6 w-full rounded-xl p-4 sm:p-5"
+      className="bg-bloggin-border/3 mt-6 w-full rounded-xl p-4 sm:p-5"
     >
       <h2 className="text-bloggin-muted! text-xl">latest articles ...</h2>
 

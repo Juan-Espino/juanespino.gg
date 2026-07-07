@@ -224,6 +224,11 @@ Bloggin TODOS:
                 ✔ [ ] Tune statue shimmer @done(26-07-06 16:07)
                 ✔ [ ] Add final hero copy and links @done(26-07-06 16:07)
 
+            NavBar:
+                - [ ] projects/home - blog
+                    - [ ] create projects page
+                - [ ] add transition in between each
+
 
     Future Upgrade:
         - [ ] Auto crop image before uploadthing
