@@ -22,7 +22,7 @@ export default function PortfolioCopy() {
         <Button
           asChild
           variant="ghost"
-          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden"
+          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden transition-colors duration-500"
         >
           <a
             rel="noreferrer noopener"
@@ -36,7 +36,7 @@ export default function PortfolioCopy() {
         <Button
           asChild
           variant="ghost"
-          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden"
+          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden transition-colors duration-500"
         >
           <a
             rel="noreferrer noopener"
@@ -50,7 +50,7 @@ export default function PortfolioCopy() {
         <Button
           asChild
           variant="ghost"
-          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden"
+          className="relative inline-flex min-w-16 items-center justify-center overflow-hidden transition-colors duration-500"
         >
           <a
             rel="noreferrer noopener"
@@ -61,7 +61,7 @@ export default function PortfolioCopy() {
             {"LinkedIn"}
           </a>
         </Button>
-        <EmailButton className="relative inline-flex min-w-16 items-center justify-center overflow-hidden" />
+        <EmailButton className="relative inline-flex min-w-16 items-center justify-center overflow-hidden transition-colors duration-500" />
       </div>
     </section>
   );

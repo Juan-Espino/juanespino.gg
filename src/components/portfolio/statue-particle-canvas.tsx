@@ -151,7 +151,7 @@ export default function StatueParticleCanvas() {
     function drawDottedStatue() {
       const parentElement = canvas.parentElement;
 
-      if (!parentElement || !image.complete) {
+      if (!parentElement || !image.complete || image.naturalWidth === 0) {
         return;
       }
 
@@ -168,6 +168,10 @@ export default function StatueParticleCanvas() {
 
       const sampleWidth = Math.floor(width);
       const sampleHeight = Math.floor(height);
+      if (sampleWidth <= 0 || sampleHeight <= 0) {
+        return;
+      }
+
       offscreenCanvas.width = Math.floor(width);
       offscreenCanvas.height = Math.floor(height);
 
@@ -203,6 +207,7 @@ export default function StatueParticleCanvas() {
         sampleWidth,
         sampleHeight,
       );
+
       const pixels = imageData.data;
 
       context.clearRect(0, 0, width, height);
@@ -292,6 +297,9 @@ export default function StatueParticleCanvas() {
       const bounds = parentElement.getBoundingClientRect();
       const width = bounds.width;
       const height = bounds.height;
+      if (width <= 0 || height <= 0) {
+        return;
+      }
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
       canvasWidth = width;
