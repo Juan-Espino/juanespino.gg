@@ -338,7 +338,7 @@ export default function StatueParticleCanvas() {
     <canvas
       ref={canvasRef}
       aria-label="Dotted statue visual"
-      className="h-full w-full cursor-crosshair"
+      className="h-full w-full cursor-crosshair touch-none"
       onPointerEnter={() => {
         if (reduceMotionRef.current) return;
         isBreakingRef.current = true;
@@ -355,9 +355,25 @@ export default function StatueParticleCanvas() {
         isBreakingRef.current = false;
         pointerRef.current = null;
       }}
-      onClick={() => {
+      onPointerDown={(event) => {
         if (reduceMotionRef.current) return;
-        isBreakingRef.current = !isBreakingRef.current;
+
+        const bounds = event.currentTarget.getBoundingClientRect();
+
+        pointerRef.current = {
+          x: event.clientX - bounds.left,
+          y: event.clientY - bounds.top,
+        };
+
+        isBreakingRef.current = true;
+      }}
+      onPointerUp={() => {
+        isBreakingRef.current = false;
+        pointerRef.current = null;
+      }}
+      onPointerCancel={() => {
+        isBreakingRef.current = false;
+        pointerRef.current = null;
       }}
     />
   );

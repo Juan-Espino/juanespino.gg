@@ -4,7 +4,7 @@ import EmailButton from "./email-button";
 export default function PortfolioCopy() {
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold tracking-wide sm:text-5xl">
+      <h1 className="text-center text-2xl font-bold tracking-wide sm:text-5xl lg:text-start">
         {"Juan Espino"}
       </h1>
       <p className="text-lg leading-loose">
@@ -18,7 +18,7 @@ export default function PortfolioCopy() {
         }
       </p>
       <p>{"Find me on"}</p>
-      <div className="flex gap-4">
+      <div className="flex justify-center gap-4 lg:justify-start">
         <Button
           asChild
           variant="ghost"
@@ -41,7 +41,7 @@ export default function PortfolioCopy() {
           <a
             rel="noreferrer noopener"
             className=""
-            href="https://x.com/juan_gg"
+            href="https://x.com/juandot_gg"
             target="_blank"
           >
             {"X"}

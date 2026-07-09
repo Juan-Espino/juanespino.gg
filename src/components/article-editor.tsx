@@ -77,12 +77,10 @@ export default function ArticleEditor({
   }
 
   return (
-    //TODO:design in shape of article-display
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 lg:max-w-5xl lg:px-6 lg:py-8">
       <header className="flex items-center justify-between gap-4">
         <div>
           <p className="text-bloggin-muted text-sm">
-            {/* TODO: add the chatgpt left to right transition here in a loop */}
             {mode === "create" ? "making article..." : "editing article..."}
           </p>
         </div>
@@ -154,7 +152,6 @@ export default function ArticleEditor({
               </button>
             </div>
           ) : (
-            // TODO: shadcn toast is uploadthing gives error from upload
             <UploadDropzone
               endpoint="articleImage"
               className="border-bloggin-border/40 bg-bloggin-background/60 hover:border-bloggin-accent/70 aspect-3/2 rounded-xl border border-dashed px-6 py-8 transition-colors"

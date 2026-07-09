@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
+    "embla-carousel": "^8.6.0",
     "lucide-react": "^1.23.0",
     "motion": "^12.42.2",
     "next": "^15.2.3",

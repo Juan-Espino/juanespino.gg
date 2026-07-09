@@ -1,5 +1,4 @@
 export default function LoadingSkeleton() {
-  // TODO:shadcn this
   return (
     <main className="flex w-full flex-1 flex-col items-center">
       <div className="w-full animate-pulse py-6">
@@ -49,7 +48,7 @@ export default function LoadingSkeleton() {
             {[1, 2, 3, 4].map((item) => (
               <div key={item} className="min-w-0">
                 <div className="bg-bloggin-border/30 aspect-3/2 rounded-xl" />
-                <div className="mx-auto mt-2 h-4 w-3/4 rounded bg-bloggin-border/30" />
+                <div className="bg-bloggin-border/30 mx-auto mt-2 h-4 w-3/4 rounded" />
               </div>
             ))}
           </div>

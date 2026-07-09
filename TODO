@@ -204,19 +204,17 @@ Bloggin TODOS:
             ✔ [ ] Add reduced-motion behavior @done(26-07-06 16:06)
             ✔ [ ] Tune responsive layout for desktop and mobile @done(26-07-06 16:06)
             ✔ [ ] Run typecheck, lint, and build @done(26-07-06 16:06)
-            - [ ] Add in & out page animation for text 
-                - [ ] all text has no height and pops up, shrinks when page changes
             ✔ [ ] Add in animation for statue @done(26-07-06 16:06)
-            - [ ] Build nav with these links/pages
-                - [ ] projects
-                - [ ] technologies 
+            ✔ [ ] Build nav with these links/pages @done(26-07-08 13:21)
+                ✔ [ ] projects @done(26-07-08 13:21)
+                ✔ [ ] technologies @done(26-07-08 13:21)
             
             MVP Visual System:
                 ✔ [ ] Start with Canvas 2D, no new packages @done(26-07-06 16:06)
                 ✔ [ ] Keep animation state outside React state @done(26-07-06 16:06)
                 ✔ [ ] Cap device pixel ratio @done(26-07-06 16:06)
                 ✔ [ ] Use fewer particles on mobile @done(26-07-06 16:06)
-                - [ ] Verify readability over the ash layer
+                ✔ [ ] Verify readability over the ash layer @done(26-07-08 13:21)
 
             Polish:
                 ✔ [ ] Tune particle density @done(26-07-06 16:07)
@@ -225,9 +223,11 @@ Bloggin TODOS:
                 ✔ [ ] Add final hero copy and links @done(26-07-06 16:07)
 
             NavBar:
-                - [ ] projects/home - blog
-                    - [ ] create projects page
-                - [ ] add transition in between each
+                ✔ [ ] projects/home - blog @done(26-07-08 14:03)
+                    ✔ [ ] create projects page @done(26-07-08 14:03)
+                ✔ [ ] add transition in between each @done(26-07-08 16:16)
+                    ✔ [ ] all text has no height and pops up, shrinks when page changes @done(26-07-08 16:16)
+                ✔ [ ] mobile responsive @done(26-07-08 18:00)
 
 
     Future Upgrade:

@@ -18,7 +18,7 @@ export default function BlogginLayout({
     <div className="relative isolate min-h-screen overflow-hidden">
       <AshFieldCanvas />
 
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col">
         <NavBar className="" />
         <div className="flex w-full flex-1 flex-col">{children}</div>
         <Footer className="" />

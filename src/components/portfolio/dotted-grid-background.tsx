@@ -44,7 +44,7 @@ export default function DottedGridBackground() {
     const context: CanvasRenderingContext2D = currentContext;
 
     let lastDrawTime = 0;
-    const frameInterval = 1000 / 40;
+    const frameInterval = 1000 / 50;
 
     function stopAnimation() {
       if (animationFrameId !== null) {
@@ -89,7 +89,7 @@ export default function DottedGridBackground() {
     }
 
     function createDots(width: number, height: number): GridDot[] {
-      const spacing = 30;
+      const spacing = 40;
       const dots: GridDot[] = [];
 
       for (let y = spacing / 2; y < height; y += spacing) {

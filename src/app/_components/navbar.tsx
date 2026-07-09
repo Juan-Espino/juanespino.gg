@@ -29,6 +29,14 @@ export default async function NavBar({ className }: NavBarProps) {
         >
           all articles
         </Link>
+        {!isAdmin && (
+          <Link
+            href={"/"}
+            className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
+          >
+            portfolio
+          </Link>
+        )}
       </div>
 
       <div className="border-bloggin-border/40 flex items-center gap-4 border-l pl-5">
