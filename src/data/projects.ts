@@ -21,7 +21,7 @@ export const projects: Project[] = [
     title: "StepOvers",
     slug: "stepovers",
     tech: ["Next.js", "PostgreSQL", "TypeScript", "Tailwind CSS"],
-    liveUrl: "https://stepovers.vercel.app/",
+    liveUrl: "https://stepovers.juanespino.gg",
     role: "Full-stack product build",
     year: "2026",
     slides: [
