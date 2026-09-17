@@ -52,7 +52,7 @@ export default function MobileArticleDisplay({
             scroll ? "opacity-0" : "opacity-100"
           }`}
         >
-          <h2 className="max-w-[18rem] text-3xl leading-tight font-bold text-balance italic sm:text-4xl">
+          <h2 className="max-w-[18rem] text-center text-3xl leading-tight font-bold text-balance italic sm:text-4xl">
             {article.title}
           </h2>
           <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
