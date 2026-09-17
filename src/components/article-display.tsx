@@ -84,17 +84,6 @@ export default function ArticleDisplay({
               </p>
             </header>
 
-            {article.imageUrl && (
-              <div className="float-right mb-8 ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
-                <Image
-                  className="h-auto w-full object-cover"
-                  src={article.imageUrl}
-                  alt={article.title}
-                  width={800}
-                  height={533}
-                />
-              </div>
-            )}
             <motion.div
               initial={false}
               animate={{
@@ -110,6 +99,17 @@ export default function ArticleDisplay({
               className="relative overflow-hidden"
             >
               <div ref={contentRef}>
+                {article.imageUrl && (
+                  <div className="float-right mb-8 ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
+                    <Image
+                      className="h-full w-full object-cover"
+                      src={article.imageUrl}
+                      alt={article.title}
+                      width={800}
+                      height={533}
+                    />
+                  </div>
+                )}
                 <MarkdownContent
                   key={article.slug}
                   content={article.content}
