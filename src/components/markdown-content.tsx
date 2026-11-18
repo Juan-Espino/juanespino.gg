@@ -1,69 +1,35 @@
 "use client";
 
+import Image from "next/image";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { motion, useReducedMotion, type Variants } from "motion/react";
-
-const markdownContainerVariants = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-};
-
-const markdownBlockVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    clipPath: "inset(0 100% 0 0)",
-  },
-  show: {
-    opacity: 1,
-    clipPath: "inset(0 0% 0 0)",
-    transition: {
-      duration: 1,
-      type: "decay",
-    },
-  },
-};
+import { useLayoutEffect, useRef } from "react";
+import { revealLines } from "~/lib/line-reveal";
 
 // Stable component identities preserve mounted blocks during article expansion.
 const markdownComponents: Components = {
   p: ({ children }) => (
-    <motion.p
-      variants={markdownBlockVariants}
-      className="text-bloggin-muted mb-5 text-lg leading-8 font-semibold"
-    >
+    <p className="text-bloggin-muted mb-5 text-lg leading-8 font-semibold">
       {children}
-    </motion.p>
+    </p>
   ),
 
   h1: ({ children }) => (
-    <motion.h1
-      variants={markdownBlockVariants}
-      className="text-bloggin-foreground/85! mb-4 text-4xl font-bold"
-    >
+    <h1 className="text-bloggin-foreground/85! mb-4 text-4xl font-bold">
       {children}
-    </motion.h1>
+    </h1>
   ),
 
   h2: ({ children }) => (
-    <motion.h2
-      variants={markdownBlockVariants}
-      className="text-bloggin-foreground/85! mb-3 text-2xl font-bold"
-    >
+    <h2 className="text-bloggin-foreground/85! mb-3 text-2xl font-bold">
       {children}
-    </motion.h2>
+    </h2>
   ),
 
   h3: ({ children }) => (
-    <motion.h3
-      variants={markdownBlockVariants}
-      className="text-bloggin-foreground/85! mb-3 text-xl font-bold"
-    >
+    <h3 className="text-bloggin-foreground/85! mb-3 text-xl font-bold">
       {children}
-    </motion.h3>
+    </h3>
   ),
 
   strong: ({ children }) => (
@@ -81,46 +47,66 @@ const markdownComponents: Components = {
     </a>
   ),
   li: ({ children }) => (
-    <motion.li
-      variants={markdownBlockVariants}
-      className="text-bloggin-muted mb-5 text-lg underline"
-    >
-      {children}
-    </motion.li>
+    <li className="text-bloggin-muted mb-5 text-lg underline">{children}</li>
   ),
 
-  img: ({ src }) => (
-    <motion.img
-      variants={markdownBlockVariants}
-      src={src}
-      className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
-      alt="md-image"
-    />
-  ),
+  img: ({ src, alt }) => {
+    if (typeof src !== "string") return null;
+    const supported =
+      (src.startsWith("/") && !src.startsWith("//")) ||
+      /^https:\/\/[^/]+\.ufs\.sh\//.test(src);
+    return supported ? (
+      <Image
+        src={src}
+        alt={alt ?? ""}
+        width={800}
+        height={533}
+        sizes="(max-width: 1023px) 33vw, 340px"
+        className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+      />
+    ) : (
+      // External Markdown hosts keep their original URL without expanding the optimizer allowlist.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt ?? ""}
+        loading="lazy"
+        decoding="async"
+        className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+      />
+    );
+  },
 };
 
 type MarkdownContentProps = {
   content: string;
   className?: string;
   animated?: boolean;
+  revealHeight?: number;
+  collapseHeight?: number;
   onAnimationComplete?: () => void;
 };
 export default function MarkdownContent({
   content,
   className,
   animated,
+  revealHeight,
+  collapseHeight,
   onAnimationComplete,
 }: MarkdownContentProps) {
-  const shouldReduceMotion = useReducedMotion();
-  const shouldAnimate = animated && !shouldReduceMotion;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!animated || !containerRef.current) return;
+    return revealLines(containerRef.current, onAnimationComplete);
+  }, [animated, content, onAnimationComplete]);
 
   return (
-    <motion.div
+    <div
+      ref={containerRef}
       className={className}
-      variants={markdownContainerVariants}
-      initial={shouldAnimate ? "hidden" : false}
-      animate={shouldAnimate ? "show" : false}
-      onAnimationComplete={onAnimationComplete}
+      data-reveal-height={revealHeight}
+      data-collapse-height={collapseHeight}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
@@ -128,6 +114,6 @@ export default function MarkdownContent({
       >
         {content}
       </ReactMarkdown>
-    </motion.div>
+    </div>
   );
 }

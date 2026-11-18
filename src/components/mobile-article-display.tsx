@@ -38,6 +38,8 @@ export default function MobileArticleDisplay({
             alt={article.title}
             width={800}
             height={533}
+            priority
+            sizes="(max-width: 1023px) 100vw, 492px"
           />
         ) : null}
 

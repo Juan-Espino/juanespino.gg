@@ -185,31 +185,30 @@ export async function getRecentPublishedArticle() {
   return article ?? null;
 }
 
-export async function getLatestPublishedArticles(limit = 10) {
-  const safeLimit = Math.min(Math.max(limit, 1), 50);
-  const articlesArr = await db
-    .select()
-    .from(articles)
-    .where(eq(articles.published, true))
-    .orderBy(desc(articles.createdAt))
-    .limit(safeLimit);
+export type ArticleCard = {
+  title: string;
+  slug: string;
+  imageUrl: string | null;
+};
 
-  return articlesArr;
-}
-
-export async function getLatestPublishedArticlesExcludingSlug(
-  slug: string,
+export async function getLatestPublishedArticleCards(
+  excludedSlug?: string,
   limit = 9,
-) {
-  const safeLimit = Math.min(Math.max(limit, 1), 50);
-  const articlesArr = await db
-    .select()
+): Promise<ArticleCard[]> {
+  return db
+    .select({
+      title: articles.title,
+      slug: articles.slug,
+      imageUrl: articles.imageUrl,
+    })
     .from(articles)
-    .where(and(eq(articles.published, true), ne(articles.slug, slug)))
+    .where(
+      excludedSlug
+        ? and(eq(articles.published, true), ne(articles.slug, excludedSlug))
+        : eq(articles.published, true),
+    )
     .orderBy(desc(articles.createdAt))
-    .limit(safeLimit);
-
-  return articlesArr;
+    .limit(Math.min(Math.max(limit, 1), 50));
 }
 
 export async function getPublishedArticleBySlug(slug: string) {
