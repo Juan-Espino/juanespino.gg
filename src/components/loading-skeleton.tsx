@@ -41,7 +41,7 @@ export default function LoadingSkeleton() {
           </div>
         </article>
 
-        <section className="bg-bloggin-border/10 mt-6 w-full rounded-xl p-4 sm:p-5">
+        <section className="mt-6 w-full rounded-xl bg-transparent p-4 ring-1 ring-white/8 backdrop-blur-[2px] ring-inset sm:p-5">
           <div className="bg-bloggin-border/30 h-6 w-40 rounded" />
 
           <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
