@@ -1,22 +1,22 @@
 import Image from "next/image";
-import Link from "next/link";
+import ArticlePrefetchLink from "./article-prefetch-link";
 import { blogginRoutes } from "~/lib/routes";
-import type { Article } from "~/server/db/app-schema";
+import type { ArticleCard } from "~/server/articles";
 import styles from "./latest-articles.module.css";
 
 type LatestArticlesProps = {
-  latestArticles: Article[];
+  latestArticles: ArticleCard[];
 };
 
 function LatestArticleCard({
   article,
   duplicate = false,
 }: {
-  article: Article;
+  article: ArticleCard;
   duplicate?: boolean;
 }) {
   return (
-    <Link
+    <ArticlePrefetchLink
       href={blogginRoutes.article(article.slug)}
       tabIndex={duplicate ? -1 : undefined}
       className={`${styles.card} group w-48 shrink-0 sm:w-56`}
@@ -38,7 +38,7 @@ function LatestArticleCard({
       <h3 className="text-bloggin-foreground group-hover:text-bloggin-accent mt-2 line-clamp-2 text-center text-sm font-bold italic transition-colors sm:text-base">
         {article.title}
       </h3>
-    </Link>
+    </ArticlePrefetchLink>
   );
 }
 

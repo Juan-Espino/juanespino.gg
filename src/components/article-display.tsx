@@ -92,6 +92,8 @@ export default function ArticleDisplay({
                       alt={article.title}
                       width={800}
                       height={533}
+                      priority
+                      sizes="(max-width: 1023px) 100vw, 492px"
                     />
                   </div>
                 )}
@@ -99,6 +101,8 @@ export default function ArticleDisplay({
                   key={article.slug}
                   content={article.content}
                   animated
+                  revealHeight={isExpanded ? undefined : collapsedHeight}
+                  collapseHeight={collapsedHeight}
                 />
               </div>
               <AnimatePresence>
@@ -120,11 +124,11 @@ export default function ArticleDisplay({
                   <ReadMoreButton
                     slug={article.slug}
                     expanded={isExpanded}
-                    onClick={() =>
+                    onClick={() => {
                       setExpandedArticleSlug((currentSlug) =>
                         currentSlug === article.slug ? null : article.slug,
-                      )
-                    }
+                      );
+                    }}
                   />
                 ) : null}
 
@@ -138,11 +142,11 @@ export default function ArticleDisplay({
                   <ReadMoreButton
                     slug={article.slug}
                     expanded={isExpanded}
-                    onClick={() =>
+                    onClick={() => {
                       setExpandedArticleSlug((currentSlug) =>
                         currentSlug === article.slug ? null : article.slug,
-                      )
-                    }
+                      );
+                    }}
                   />
                 ) : null}
 

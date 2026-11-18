@@ -6,7 +6,7 @@ import ArticleStatusToast from "~/components/article-status-toast";
 import LatestArticles from "~/components/latest-articles";
 import {
   getArticleBySlugForAdmin,
-  getLatestPublishedArticlesExcludingSlug,
+  getLatestPublishedArticleCards,
   getPublishedArticleBySlug,
 } from "~/server/articles";
 import { getIsAdmin } from "~/server/better-auth/admin";
@@ -62,7 +62,7 @@ export default async function ArticlePage({
 
   const [article, latestArticles] = await Promise.all([
     isAdmin ? getArticleBySlugForAdmin(slug) : getArticle(slug),
-    getLatestPublishedArticlesExcludingSlug(slug, 9),
+    getLatestPublishedArticleCards(slug, 9),
   ]);
 
   if (!article) {
