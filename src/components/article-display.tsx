@@ -23,27 +23,12 @@ export default function ArticleDisplay({
   const [expandedArticleSlug, setExpandedArticleSlug] = useState<string | null>(
     null,
   );
-  const [animatedArticleSlug, setAnimatedArticleSlug] = useState<string | null>(
-    null,
-  );
   const collapsedHeight = 360;
   const contentRef = useRef<HTMLDivElement>(null);
   const [canExpand, setCanExpand] = useState(false);
   const [hasMeasuredContent, setHasMeasuredContent] = useState(false);
   const isExpanded =
     articleSlug !== null && expandedArticleSlug === articleSlug;
-  const hasMarkdownAnimated =
-    articleSlug !== null && animatedArticleSlug === articleSlug;
-
-  useEffect(() => {
-    if (!articleSlug || hasMarkdownAnimated) return;
-
-    const timeoutId = window.setTimeout(() => {
-      setAnimatedArticleSlug(articleSlug);
-    }, 1400);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [articleSlug, hasMarkdownAnimated]);
   useEffect(() => {
     const contentElement = contentRef.current;
 
@@ -100,7 +85,7 @@ export default function ArticleDisplay({
             >
               <div ref={contentRef}>
                 {article.imageUrl && (
-                  <div className="float-right mb-8 ml-8 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
+                  <div className="float-right mb-4 ml-4 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
                     <Image
                       className="h-full w-full object-cover"
                       src={article.imageUrl}
@@ -113,7 +98,7 @@ export default function ArticleDisplay({
                 <MarkdownContent
                   key={article.slug}
                   content={article.content}
-                  animated={!hasMarkdownAnimated}
+                  animated
                 />
               </div>
               <AnimatePresence>

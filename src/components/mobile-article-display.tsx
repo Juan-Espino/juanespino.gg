@@ -62,7 +62,7 @@ export default function MobileArticleDisplay({
           </span>
         </div>
       </div>
-      <div className="w-full min-w-0 p-4 text-center">
+      <div className="w-full min-w-0 p-4 text-left">
         <MarkdownContent content={article.content} />
 
         {isAdmin ? (

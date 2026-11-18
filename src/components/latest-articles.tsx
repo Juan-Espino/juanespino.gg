@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { blogginRoutes } from "~/lib/routes";
 import type { Article } from "~/server/db/app-schema";
+import styles from "./latest-articles.module.css";
 
 type LatestArticlesProps = {
   latestArticles: Article[];
@@ -18,16 +19,18 @@ function LatestArticleCard({
     <Link
       href={blogginRoutes.article(article.slug)}
       tabIndex={duplicate ? -1 : undefined}
-      className="group w-48 shrink-0 sm:w-56"
+      className={`${styles.card} group w-48 shrink-0 sm:w-56`}
     >
-      <div className="bg-bloggin-background relative aspect-3/2 overflow-hidden rounded-xl">
+      <div
+        className={`${styles.imageFrame} bg-bloggin-background relative aspect-3/2 rounded-xl`}
+      >
         {article.imageUrl ? (
           <Image
             fill
             src={article.imageUrl}
             alt={article.title}
             sizes="(max-width: 640px) 12rem, 14rem"
-            className="object-cover transition-transform duration-200 group-hover:scale-[1.03]"
+            className="rounded-xl object-cover"
           />
         ) : null}
       </div>
@@ -51,11 +54,11 @@ export default function LatestArticles({
     <section
       data-mobile-marquee={hasMobileMarquee}
       data-desktop-marquee={hasDesktopMarquee}
-      className="bg-bloggin-border/3 mt-6 w-full rounded-xl p-4 sm:p-5"
+      className="mt-6 w-full rounded-xl bg-transparent p-4 ring-1 ring-white/8 backdrop-blur-[2px] ring-inset sm:p-5"
     >
       <h2 className="text-bloggin-muted! text-xl">latest articles ...</h2>
 
-      <div className="mt-6 overflow-hidden">
+      <div className="-mx-2 mt-4 -mb-2 overflow-hidden p-2">
         <div className="bloggin-marquee flex w-max gap-4">
           <div className="flex gap-4">
             {latestArticles.map((article) => (
