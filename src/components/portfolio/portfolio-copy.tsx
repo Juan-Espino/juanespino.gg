@@ -41,7 +41,7 @@ export default function PortfolioCopy() {
           <a
             rel="noreferrer noopener"
             className=""
-            href="https://x.com/juandotgg_"
+            href="https://x.com/greyppk"
             target="_blank"
           >
             {"X"}
