@@ -19,6 +19,23 @@ export async function deleteUploadThingFile(imageKey: string) {
   }
 }
 
+/**
+ * Deletes an uploaded file only if no saved article references it.
+ * Guards unsaved-upload cleanup against deleting a live article image.
+ */
+export async function deleteUnusedUploadThingFile(imageKey: string) {
+  const [inUse] = await db
+    .select({ id: articles.id })
+    .from(articles)
+    .where(eq(articles.imageKey, imageKey))
+    .limit(1);
+
+  if (inUse) return false;
+
+  await deleteUploadThingFile(imageKey);
+  return true;
+}
+
 export type ArticleFormState = {
   success: boolean;
   message?: string;

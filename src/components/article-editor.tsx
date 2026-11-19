@@ -1,5 +1,11 @@
 "use client";
-import { useActionState, useState, useTransition } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { type ArticleFormState } from "~/server/articles";
 import SubmitButton from "./submit-button";
 import MarkdownContent from "./markdown-content";
@@ -48,6 +54,60 @@ export default function ArticleEditor({
   const savedImageKey = initialValues?.imageKey ?? "";
   const currentImageIsUnsaved = imageKey !== "" && imageKey !== savedImageKey;
 
+  // Refs let the page-exit cleanup read the latest values without re-binding.
+  const unsavedImageKeyRef = useRef("");
+  const isSubmittingRef = useRef(false);
+  const discardedImageKeyRef = useRef("");
+
+  useEffect(() => {
+    unsavedImageKeyRef.current = currentImageIsUnsaved ? imageKey : "";
+  }, [currentImageIsUnsaved, imageKey]);
+
+  // A finished submission that returned (instead of redirecting) means the
+  // save failed, so the upload is unsaved again.
+  useEffect(() => {
+    isSubmittingRef.current = false;
+  }, [state]);
+
+  // Delete an unsaved upload when the editor is left without saving: tab
+  // close, refresh, external navigation (pagehide) or in-app navigation
+  // (unmount). The server refuses if a saved article uses the key.
+  useEffect(() => {
+    function discardUnsavedUpload() {
+      const key = unsavedImageKeyRef.current;
+      if (!key || isSubmittingRef.current) return;
+      if (discardedImageKeyRef.current === key) return;
+
+      discardedImageKeyRef.current = key;
+      navigator.sendBeacon(
+        "/api/uploads/discard",
+        new Blob([JSON.stringify({ imageKey: key })], {
+          type: "application/json",
+        }),
+      );
+    }
+
+    // Restored from the back/forward cache: the upload was discarded, so
+    // fall back to the saved image instead of showing a deleted file.
+    function handlePageShow(event: PageTransitionEvent) {
+      const key = discardedImageKeyRef.current;
+      if (!event.persisted || !key || unsavedImageKeyRef.current !== key) {
+        return;
+      }
+      setImageUrl(initialValues?.imageUrl ?? "");
+      setImageKey(initialValues?.imageKey ?? "");
+    }
+
+    window.addEventListener("pagehide", discardUnsavedUpload);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pagehide", discardUnsavedUpload);
+      window.removeEventListener("pageshow", handlePageShow);
+      discardUnsavedUpload();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleChangeImage() {
     if (!imageKey || isRemovingImage) return;
 
@@ -87,6 +147,9 @@ export default function ArticleEditor({
       </header>
       <form
         action={formAction}
+        onSubmit={() => {
+          isSubmittingRef.current = true;
+        }}
         className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.9fr)] lg:items-start lg:gap-8"
       >
         <div className="flex min-w-0 flex-col gap-4">

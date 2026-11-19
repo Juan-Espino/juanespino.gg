@@ -1,7 +1,7 @@
 "use server";
 import {
   deleteArticle,
-  deleteUploadThingFile,
+  deleteUnusedUploadThingFile,
   removeArticleImage,
   type ArticleImageRemovalState,
 } from "./articles";
@@ -32,7 +32,14 @@ export async function deleteUploadedImage(
     };
   }
 
-  await deleteUploadThingFile(imageKey);
+  const deleted = await deleteUnusedUploadThingFile(imageKey);
+
+  if (!deleted) {
+    return {
+      success: false,
+      message: "Image is in use by a saved article. Refresh and try again.",
+    };
+  }
 
   return {
     success: true,
