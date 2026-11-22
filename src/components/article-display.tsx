@@ -61,7 +61,7 @@ export default function ArticleDisplay({
         <div className="hidden w-full lg:block">
           <article className="w-full">
             <header className="border-bloggin-border/40 mb-4 border-b pb-4">
-              <h2 className="mb-2 max-w-xl text-4xl font-bold text-balance italic">
+              <h2 className="mb-2 text-4xl font-bold text-pretty italic">
                 {article.title}
               </h2>
               <p className="text-bloggin-muted/70! text-sm whitespace-nowrap">
