@@ -88,8 +88,9 @@ export default function ProjectsShowcase() {
                     }
                     // Fills the bottom-right corner of the card: half the row,
                     // stretched through the card's padding to its edges, with
-                    // the label centered in it.
-                    className="-mr-6 -mb-6 inline-flex w-1/2 items-center justify-center gap-2 rounded-br-2xl py-[18px] text-xs font-medium tracking-[0.22em] text-zinc-300 uppercase transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white max-md:-mr-5 max-md:-mb-5 max-md:py-4"
+                    // the label centered in it. Hover glows like the latest
+                    // articles cards.
+                    className={`${styles.visit} -mr-6 -mb-6 inline-flex w-1/2 items-center justify-center gap-2 rounded-br-2xl py-[18px] text-xs font-medium tracking-[0.22em] text-zinc-300 uppercase hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white max-md:-mr-5 max-md:-mb-5 max-md:py-4`}
                     aria-label={`Visit ${project.title}`}
                   >
                     Visit{" "}
