@@ -247,3 +247,12 @@ h4 {
     @apply font-sans;
   }
 }
+
+/* Live-preview editor: mobile images are full-width blocks, and the cursor
+   helper CodeMirror puts before them would otherwise sit on an empty line
+   above the image. */
+@media (max-width: 767.98px) {
+  .live-markdown-editor .cm-widgetBuffer:has(+ .cm-md-inline) {
+    display: none;
+  }
+}

@@ -21,7 +21,7 @@ export default function DeleteButton({ slug }: DeleteButtonProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">delete</Button>
+        <Button variant="destructive">delete article</Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent size="sm">

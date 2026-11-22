@@ -5,41 +5,93 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useLayoutEffect, useRef } from "react";
 import { revealLines } from "~/lib/line-reveal";
+import {
+  imageClearClass,
+  imageSide,
+  type ImageSide,
+  isOptimizableImageSrc,
+  markdownStyles as md,
+} from "~/lib/markdown-styles";
+
+type HastNode = {
+  type: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+};
+
+/**
+ * Rehype plugin: tags each image with its side. Pass `fixed` to give every
+ * image the same side (the editor renders one image at a time).
+ */
+export function rehypeImageSides(fixed?: ImageSide) {
+  return () => (tree: HastNode) => {
+    let index = 0;
+    const walk = (node: HastNode, parent?: HastNode) => {
+      if (node.type === "element" && node.tagName === "img") {
+        node.properties = {
+          ...node.properties,
+          dataSide: fixed ?? imageSide(index),
+        };
+        // The paragraph holding it clears the previous image.
+        if (!fixed && parent && parent.properties?.dataClear === undefined) {
+          parent.properties = {
+            ...parent.properties,
+            dataClear: imageClearClass(index),
+          };
+        }
+        index++;
+      }
+      node.children?.forEach((child) => walk(child, node));
+    };
+    walk(tree);
+  };
+}
+
+function imageClass(node: unknown) {
+  const side = (node as HastNode | undefined)?.properties?.dataSide;
+  return `${md.img.base} ${side === "right" ? md.img.right : md.img.left}`;
+}
 
 // Stable component identities preserve mounted blocks during article expansion.
-const markdownComponents: Components = {
-  p: ({ children }) => (
-    <p className="text-bloggin-muted mb-5 text-lg leading-8 font-semibold">
+// Shared with the live-preview editor so its rendered blocks match exactly.
+export const markdownComponents: Components = {
+  p: ({ children, node }) => (
+    <p
+      className={`${md.p.text} ${md.p.margin} ${
+        ((node as HastNode | undefined)?.properties?.dataClear as string) ?? ""
+      }`}
+    >
       {children}
     </p>
   ),
 
   h1: ({ children }) => (
-    <h1 className="text-bloggin-foreground/85! mb-4 text-4xl font-bold">
+    <h1 className={`${md.h1.text} ${md.h1.margin}`}>
       {children}
     </h1>
   ),
 
   h2: ({ children }) => (
-    <h2 className="text-bloggin-foreground/85! mb-3 text-2xl font-bold">
+    <h2 className={`${md.h2.text} ${md.h2.margin}`}>
       {children}
     </h2>
   ),
 
   h3: ({ children }) => (
-    <h3 className="text-bloggin-foreground/85! mb-3 text-xl font-bold">
+    <h3 className={`${md.h3.text} ${md.h3.margin}`}>
       {children}
     </h3>
   ),
 
   strong: ({ children }) => (
-    <strong className="text-bloggin-accent font-bold">{children}</strong>
+    <strong className={md.strong}>{children}</strong>
   ),
 
   a: ({ children, href }) => (
     <a
       href={href}
-      className="text-bloggin-neon underline underline-offset-4"
+      className={md.a}
       target="_blank"
       rel="noreferrer"
     >
@@ -47,22 +99,19 @@ const markdownComponents: Components = {
     </a>
   ),
   li: ({ children }) => (
-    <li className="text-bloggin-muted mb-5 text-lg underline">{children}</li>
+    <li className={`${md.li.text} ${md.li.margin}`}>{children}</li>
   ),
 
-  img: ({ src, alt }) => {
+  img: ({ src, alt, node }) => {
     if (typeof src !== "string") return null;
-    const supported =
-      (src.startsWith("/") && !src.startsWith("//")) ||
-      /^https:\/\/[^/]+\.ufs\.sh\//.test(src);
-    return supported ? (
+    return isOptimizableImageSrc(src) ? (
       <Image
         src={src}
         alt={alt ?? ""}
         width={800}
         height={533}
-        sizes="(max-width: 1023px) 33vw, 340px"
-        className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+        sizes="(max-width: 767px) 100vw, 340px"
+        className={imageClass(node)}
       />
     ) : (
       // External Markdown hosts keep their original URL without expanding the optimizer allowlist.
@@ -72,7 +121,7 @@ const markdownComponents: Components = {
         alt={alt ?? ""}
         loading="lazy"
         decoding="async"
-        className="aspect-3/2 h-auto max-w-1/3 rounded-xl object-cover"
+        className={imageClass(node)}
       />
     );
   },
@@ -110,6 +159,7 @@ export default function MarkdownContent({
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeImageSides()]}
         components={markdownComponents}
       >
         {content}

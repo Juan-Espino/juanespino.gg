@@ -2,7 +2,7 @@ export default function LoadingSkeleton() {
   return (
     <main className="flex w-full flex-1 flex-col items-center">
       <div className="w-full animate-pulse py-6">
-        <article className="lg:hidden">
+        <article className="md:hidden">
           <div className="bg-bloggin-border/30 mb-6 aspect-3/2 w-full rounded-xl" />
           <div className="space-y-4">
             {[1, 2].map((_, index) => (
@@ -17,7 +17,7 @@ export default function LoadingSkeleton() {
           </div>
         </article>
 
-        <article className="hidden w-full lg:block">
+        <article className="hidden w-full md:block">
           <header className="border-bloggin-border/40 mb-4 border-b pb-4">
             <div className="bg-bloggin-border/40 h-10 w-2/3 max-w-xl rounded" />
             <div className="bg-bloggin-border/30 mt-3 h-4 w-32 rounded" />

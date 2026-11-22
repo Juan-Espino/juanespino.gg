@@ -5,6 +5,7 @@ import ShareButton from "./share-button";
 import Image from "next/image";
 import { formattedDate } from "~/utils/helpers";
 import ReadMoreButton from "./read-more-button";
+import { markdownStyles } from "~/lib/markdown-styles";
 import MarkdownContent from "./markdown-content";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -54,14 +55,14 @@ export default function ArticleDisplay({
     <section className="w-full">
       <>
         <MobileArticleDisplay
-          className={"lg:hidden"}
+          className={"md:hidden"}
           article={article}
           isAdmin={isAdmin}
         />
-        <div className="hidden w-full lg:block">
+        <div className="hidden w-full md:block">
           <article className="w-full">
             <header className="border-bloggin-border/40 mb-4 border-b pb-4">
-              <h2 className="mb-2 max-w-xl text-4xl font-bold text-balance italic">
+              <h2 className="mb-2 text-4xl font-bold text-pretty">
                 {article.title}
               </h2>
               <p className="text-bloggin-muted/70! text-sm whitespace-nowrap">
@@ -85,7 +86,7 @@ export default function ArticleDisplay({
             >
               <div ref={contentRef}>
                 {article.imageUrl && (
-                  <div className="float-right mb-4 ml-4 aspect-3/2 w-[48%] max-w-xl overflow-hidden rounded-xl">
+                  <div className={markdownStyles.headerImage}>
                     <Image
                       className="h-full w-full object-cover"
                       src={article.imageUrl}
@@ -93,7 +94,7 @@ export default function ArticleDisplay({
                       width={800}
                       height={533}
                       priority
-                      sizes="(max-width: 1023px) 100vw, 492px"
+                      sizes="(max-width: 767px) 100vw, 492px"
                     />
                   </div>
                 )}

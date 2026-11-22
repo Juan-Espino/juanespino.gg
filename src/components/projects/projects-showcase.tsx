@@ -72,8 +72,8 @@ export default function ProjectsShowcase() {
                 <p className="mt-1 text-xs leading-relaxed font-medium tracking-[0.18em] text-zinc-300 uppercase">
                   {project.description}
                 </p>
-                <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
-                  <span className="text-xs tracking-widest text-zinc-400">
+                <div className="mt-4 flex items-stretch justify-between border-t border-white/10">
+                  <span className="self-center pt-3 text-xs tracking-widest text-zinc-400">
                     2026
                   </span>
                   <Link
@@ -86,7 +86,10 @@ export default function ProjectsShowcase() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.22em] text-zinc-300 uppercase transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    // Fills the bottom-right corner of the card: half the row,
+                    // stretched through the card's padding to its edges, with
+                    // the label centered in it.
+                    className="-mr-6 -mb-6 inline-flex w-1/2 items-center justify-center gap-2 rounded-br-2xl py-[18px] text-xs font-medium tracking-[0.22em] text-zinc-300 uppercase transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white max-md:-mr-5 max-md:-mb-5 max-md:py-4"
                     aria-label={`Visit ${project.title}`}
                   >
                     Visit{" "}

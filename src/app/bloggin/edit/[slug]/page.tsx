@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import ArticleEditor from "~/components/article-editor";
 import { blogginRoutes } from "~/lib/routes";
-import { getArticleBySlugForAdmin, updateArticle } from "~/server/articles";
+import { getArticleBySlugForAdmin, saveArticle } from "~/server/articles";
 import { getIsAdmin } from "~/server/better-auth/admin";
 
 type EditArticlePageProps = {
@@ -28,7 +28,7 @@ export default async function EditArticlePage({
   return (
     <ArticleEditor
       mode="edit"
-      action={updateArticle.bind(null, slug)}
+      action={saveArticle}
       initialValues={article}
     />
   );

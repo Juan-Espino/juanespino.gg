@@ -67,12 +67,21 @@ const createArticleSchema = z
       .trim()
       .min(1, "title is required")
       .max(256, "Title must be 256 characters or fewer."),
-    content: z.string().trim().min(1, "content is required"),
+    content: z.string().trim(),
     imageUrl: z.string().url("enter a valid image URL").optional(),
     imageKey: z.string().trim().min(1, "image key is required").optional(),
     published: z.boolean(),
   })
   .superRefine((input, ctx) => {
+    // Drafts only need a title; publishing needs content and an image too.
+    if (input.published && !input.content) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["content"],
+        message: "published articles require content",
+      });
+    }
+
     if (input.published && !input.imageUrl) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -102,6 +111,12 @@ function getOptionalFormString(formData: FormData, key: string) {
   const value = getFormString(formData, key);
 
   return value === "" ? undefined : value;
+}
+
+function getFormArticleId(formData: FormData) {
+  const id = Number(getFormString(formData, "id"));
+
+  return Number.isInteger(id) && id > 0 ? id : undefined;
 }
 
 function getCreateArticleInput(formData: FormData) {
@@ -153,7 +168,22 @@ async function getUniqueArticleSlug(title: string, ignoredArticleId?: number) {
   return slug;
 }
 
-export async function createArticle(
+async function getArticleById(id: number) {
+  const [article] = await db
+    .select()
+    .from(articles)
+    .where(eq(articles.id, id))
+    .limit(1);
+
+  return article ?? null;
+}
+
+/**
+ * Manual save for both the create and edit pages. A form with an `id`
+ * (an edited article, or a new one that was already auto-saved) updates
+ * that row; otherwise a new article is inserted.
+ */
+export async function saveArticle(
   _prevState: ArticleFormState,
   formData: FormData,
 ): Promise<ArticleFormState> {
@@ -164,7 +194,7 @@ export async function createArticle(
   }
 
   if (!(await getIsAdmin())) {
-    throw new Error("Failed, user is not allowed to create articles");
+    throw new Error("Failed, user is not allowed to save articles");
   }
 
   const result = createArticleSchema.safeParse(getCreateArticleInput(formData));
@@ -177,6 +207,38 @@ export async function createArticle(
   }
 
   const input = result.data;
+  const articleId = getFormArticleId(formData);
+
+  if (articleId) {
+    const article = await getArticleById(articleId);
+
+    if (!article) {
+      throw new Error("Failed, article does not exist");
+    }
+
+    const newSlug = await getUniqueArticleSlug(input.title, article.id);
+    const previousImageKey = article.imageKey;
+    const nextImageKey = input.imageKey ?? null;
+
+    await db
+      .update(articles)
+      .set({
+        title: input.title,
+        content: input.content,
+        slug: newSlug,
+        imageUrl: input.imageUrl ?? null,
+        imageKey: nextImageKey,
+        published: input.published,
+      })
+      .where(eq(articles.id, article.id));
+
+    if (previousImageKey && previousImageKey !== nextImageKey) {
+      await deleteUploadThingFile(previousImageKey);
+    }
+
+    redirect(`${blogginRoutes.article(newSlug)}?updated=1`);
+  }
+
   const slug = await getUniqueArticleSlug(input.title);
 
   await db.insert(articles).values({
@@ -190,6 +252,110 @@ export async function createArticle(
   });
 
   redirect(`${blogginRoutes.article(slug)}?created=1`);
+}
+
+const autosaveDraftSchema = z.object({
+  id: z.number().int().positive().optional(),
+  title: z
+    .string()
+    .trim()
+    .min(1, "title is required")
+    .max(256, "Title must be 256 characters or fewer."),
+  content: z.string(),
+  imageUrl: z.string().url().optional(),
+  imageKey: z.string().trim().min(1).optional(),
+});
+
+export type AutosaveDraftInput = z.input<typeof autosaveDraftSchema>;
+
+export type AutosaveDraftResult =
+  | { ok: true; id: number; slug: string }
+  | {
+      ok: false;
+      // unauthorized: stop retrying; published/invalid/not_found: stop
+      // auto-saving; error: transient, safe to retry.
+      reason: "unauthorized" | "invalid" | "published" | "not_found" | "error";
+    };
+
+/**
+ * Auto-save for drafts. Never touches `published`, and only writes rows
+ * that are still drafts. The first save (no `id`) creates the draft.
+ */
+export async function autosaveDraft(
+  rawInput: AutosaveDraftInput,
+): Promise<AutosaveDraftResult> {
+  try {
+    const session = await getSession();
+
+    if (!session?.user.id || !(await getIsAdmin())) {
+      return { ok: false, reason: "unauthorized" };
+    }
+
+    const parsed = autosaveDraftSchema.safeParse(rawInput);
+
+    if (!parsed.success) {
+      return { ok: false, reason: "invalid" };
+    }
+
+    const input = parsed.data;
+
+    if (!input.id) {
+      const slug = await getUniqueArticleSlug(input.title);
+      const [created] = await db
+        .insert(articles)
+        .values({
+          authorId: session.user.id,
+          title: input.title,
+          content: input.content,
+          slug,
+          imageUrl: input.imageUrl ?? null,
+          imageKey: input.imageKey ?? null,
+          published: false,
+        })
+        .returning({ id: articles.id });
+
+      if (!created) return { ok: false, reason: "error" };
+
+      return { ok: true, id: created.id, slug };
+    }
+
+    const article = await getArticleById(input.id);
+
+    if (!article) return { ok: false, reason: "not_found" };
+    if (article.published) return { ok: false, reason: "published" };
+
+    // Drafts aren't public, so the slug follows the title. Only look up a
+    // new one when the title actually changed.
+    const slug =
+      article.title === input.title
+        ? article.slug
+        : await getUniqueArticleSlug(input.title, article.id);
+    const nextImageKey = input.imageKey ?? null;
+
+    const [updated] = await db
+      .update(articles)
+      .set({
+        title: input.title,
+        content: input.content,
+        slug,
+        imageUrl: input.imageUrl ?? null,
+        imageKey: nextImageKey,
+      })
+      .where(and(eq(articles.id, article.id), eq(articles.published, false)))
+      .returning({ id: articles.id });
+
+    // Published between the read and the write.
+    if (!updated) return { ok: false, reason: "published" };
+
+    if (article.imageKey && article.imageKey !== nextImageKey) {
+      await deleteUploadThingFile(article.imageKey);
+    }
+
+    return { ok: true, id: article.id, slug };
+  } catch (error) {
+    console.error("Failed to auto-save draft", error);
+    return { ok: false, reason: "error" };
+  }
 }
 
 export async function getRecentPublishedArticle() {
@@ -250,51 +416,6 @@ export async function getArticleBySlugForAdmin(slug: string) {
     .limit(1);
 
   return article ?? null;
-}
-
-export async function updateArticle(
-  slug: string,
-  _prevState: ArticleFormState,
-  formData: FormData,
-): Promise<ArticleFormState> {
-  const article = await getArticleBySlugForAdmin(slug);
-
-  if (!article) {
-    throw new Error("Failed, article does not exist");
-  }
-
-  const result = createArticleSchema.safeParse(getCreateArticleInput(formData));
-
-  if (!result.success) {
-    return {
-      success: false,
-      errors: result.error.flatten().fieldErrors,
-    };
-  }
-
-  const input = result.data;
-  const newSlug = await getUniqueArticleSlug(input.title, article.id);
-
-  const previousImageKey = article.imageKey;
-  const nextImageKey = input.imageKey ?? null;
-
-  await db
-    .update(articles)
-    .set({
-      title: input.title,
-      content: input.content,
-      slug: newSlug,
-      imageUrl: input.imageUrl ?? null,
-      imageKey: nextImageKey,
-      published: input.published,
-    })
-    .where(eq(articles.id, article.id));
-
-  if (previousImageKey && previousImageKey !== nextImageKey) {
-    await deleteUploadThingFile(previousImageKey);
-  }
-
-  redirect(`${blogginRoutes.article(newSlug)}?updated=1`);
 }
 
 export async function removeArticleImage(

@@ -47,3 +47,6 @@ yarn-error.log*
 
 # TODO files
 TODO
+# playwright
+/test-results/
+/playwright-report/
