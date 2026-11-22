@@ -13,6 +13,9 @@ import DeleteButton from "./delete-button";
 import Image from "next/image";
 import { UploadDropzone } from "~/utils/uploadthing";
 import { deleteUploadedImage } from "~/server/actions";
+import { Switch } from "./ui/switch";
+import AutosaveStatusLabel from "./autosave-status";
+import { useAutosave, type AutosaveValues } from "~/hooks/use-autosave";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -25,6 +28,7 @@ type ArticleEditorProps = {
     formData: FormData,
   ) => Promise<ArticleFormState>;
   initialValues?: {
+    id: number;
     title: string;
     content: string;
     imageUrl: string | null;
@@ -43,31 +47,60 @@ export default function ArticleEditor({
   action,
   initialValues,
 }: ArticleEditorProps) {
-  const [state, formAction] = useActionState(action, initialArticleFormState);
-  const [content, setContent] = useState(initialValues?.content ?? "");
-  const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
-  const [imageKey, setImageKey] = useState(initialValues?.imageKey ?? "");
-  const [isRemovingImage, startRemovingImage] = useTransition();
-  const [imageRemovalError, setImageRemovalError] = useState<string | null>(
-    null,
-  );
-  const savedImageKey = initialValues?.imageKey ?? "";
-  const currentImageIsUnsaved = imageKey !== "" && imageKey !== savedImageKey;
-
   // Refs let the page-exit cleanup read the latest values without re-binding.
   const unsavedImageKeyRef = useRef("");
   const isSubmittingRef = useRef(false);
   const discardedImageKeyRef = useRef("");
 
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [content, setContent] = useState(initialValues?.content ?? "");
+  const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
+  const [imageKey, setImageKey] = useState(initialValues?.imageKey ?? "");
+  // The image key stored in the database; auto-save moves it forward.
+  const [savedImageKey, setSavedImageKey] = useState(
+    initialValues?.imageKey ?? "",
+  );
+
+  const autosave = useAutosave({
+    enabled: !initialValues?.published,
+    initialId: initialValues?.id,
+    values: { title, content, imageUrl, imageKey },
+    onSaved: (saved: AutosaveValues) => setSavedImageKey(saved.imageKey),
+  });
+
+  // Manual save: let any auto-save in flight finish first so a new draft
+  // is submitted with its id (updated, not inserted twice).
+  const [state, formAction] = useActionState(
+    async (prevState: ArticleFormState, formData: FormData) => {
+      isSubmittingRef.current = true;
+      const id = await autosave.pause();
+      if (id) formData.set("id", String(id));
+      let result: ArticleFormState;
+      try {
+        result = await action(prevState, formData);
+      } catch (error) {
+        isSubmittingRef.current = false;
+        autosave.resume();
+        throw error;
+      }
+      // Returned instead of redirecting: the save failed, so the upload is
+      // unsaved again and auto-save picks back up.
+      isSubmittingRef.current = false;
+      autosave.resume();
+      return result;
+    },
+    initialArticleFormState,
+  );
+  const [isRemovingImage, startRemovingImage] = useTransition();
+  const [imageRemovalError, setImageRemovalError] = useState<string | null>(
+    null,
+  );
+  const currentImageIsUnsaved = imageKey !== "" && imageKey !== savedImageKey;
+
+
   useEffect(() => {
     unsavedImageKeyRef.current = currentImageIsUnsaved ? imageKey : "";
   }, [currentImageIsUnsaved, imageKey]);
-
-  // A finished submission that returned (instead of redirecting) means the
-  // save failed, so the upload is unsaved again.
-  useEffect(() => {
-    isSubmittingRef.current = false;
-  }, [state]);
 
   // Delete an unsaved upload when the editor is left without saving: tab
   // close, refresh, external navigation (pagehide) or in-app navigation
@@ -147,16 +180,14 @@ export default function ArticleEditor({
       </header>
       <form
         action={formAction}
-        onSubmit={() => {
-          isSubmittingRef.current = true;
-        }}
         className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.9fr)] lg:items-start lg:gap-8"
       >
         <div className="flex min-w-0 flex-col gap-4">
           <input
-            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-neon/70 w-full border-b bg-transparent py-3 text-3xl font-bold outline-none"
+            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-accent w-full border-b bg-transparent py-3 text-3xl font-bold outline-none"
             name="title"
-            defaultValue={initialValues?.title ?? ""}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             placeholder="title"
           />
           {state.errors?.title?.map((error) => (
@@ -164,11 +195,12 @@ export default function ArticleEditor({
               {error}
             </p>
           ))}
+          <input type="hidden" name="id" value={autosave.id ?? ""} />
           <input type="hidden" name="imageUrl" value={imageUrl} />
           <input type="hidden" name="imageKey" value={imageKey} />
 
           <textarea
-            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-neon/70 min-h-96 w-full resize-y border-b bg-transparent py-4 font-mono text-sm leading-7 transition-colors duration-200 outline-none lg:min-h-136"
+            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-accent min-h-96 w-full resize-y border-b bg-transparent py-4 font-mono text-sm leading-7 transition-colors duration-200 outline-none lg:min-h-136"
             name="content"
             defaultValue={initialValues?.content ?? ""}
             onChange={(event) => setContent(event.target.value)}
@@ -180,16 +212,18 @@ export default function ArticleEditor({
             </p>
           ))}
           <div className="flex items-center justify-between gap-4 pt-4">
-            <label className="text-bloggin-muted flex items-center gap-3 text-sm">
-              <input
-                className="border-bloggin-border bg-bloggin-background checked:bg-bloggin-accent checked:border-bloggin-accent accent-bloggin-accent h-5 w-5 rounded-sm border"
-                type="checkbox"
+            <label className="group/publish text-bloggin-muted has-[[data-state=checked]]:text-bloggin-foreground hover:text-bloggin-foreground flex cursor-pointer items-center gap-3 text-sm transition-colors">
+              <Switch
+                className="group-hover/publish:data-checked:bg-white group-hover/publish:data-unchecked:bg-bloggin-muted/60"
                 name="published"
                 defaultChecked={initialValues?.published ?? false}
               />
               publish
             </label>
-            <SubmitButton mode={mode} />
+            <div className="flex items-center gap-4">
+              <AutosaveStatusLabel status={autosave.status} />
+              <SubmitButton mode={mode} />
+            </div>
           </div>
         </div>
 
@@ -207,7 +241,7 @@ export default function ArticleEditor({
               </div>
               <button
                 type="button"
-                className="border-bloggin-border/40 text-bloggin-muted hover:border-bloggin-accent/70 hover:text-bloggin-foreground disabled:text-bloggin-muted/50 rounded border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
+                className="border-bloggin-border/40 text-bloggin-muted hover:border-bloggin-accent/70 hover:text-bloggin-foreground disabled:text-bloggin-muted/50 cursor-pointer rounded border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
                 disabled={!imageKey || isRemovingImage}
                 onClick={handleChangeImage}
               >
@@ -217,6 +251,7 @@ export default function ArticleEditor({
           ) : (
             <UploadDropzone
               endpoint="articleImage"
+              config={{ mode: "auto", appendOnPaste: true }}
               className="border-bloggin-border/40 bg-bloggin-background/60 hover:border-bloggin-accent/70 aspect-3/2 rounded-xl border border-dashed px-6 py-8 transition-colors"
               appearance={{
                 uploadIcon: "text-bloggin-muted size-10",
@@ -227,13 +262,12 @@ export default function ArticleEditor({
                   "bg-bloggin-accent text-bloggin-background hover:bg-bloggin-foreground h-9 rounded px-4 text-sm font-bold transition-colors disabled:bg-bloggin-muted",
               }}
               content={{
-                label: "drop image or click here!",
+                label: "drop, paste or click here!",
                 allowedContent: "Images up to 4MB. Recommended 1200 x 800.",
-                button({ ready, isUploading, files }) {
+                button({ ready, isUploading }) {
                   if (!ready) return "loading...";
                   if (isUploading) return "uploading...";
-                  if (files.length > 0) return `upload ${files.length} image`;
-                  return "waiting for file... ";
+                  return "choose image";
                 },
               }}
               onClientUploadComplete={(res) => {
