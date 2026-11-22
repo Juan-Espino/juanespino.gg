@@ -54,7 +54,7 @@ export default function LatestArticles({
     <section
       data-mobile-marquee={hasMobileMarquee}
       data-desktop-marquee={hasDesktopMarquee}
-      className="mt-6 w-full rounded-xl bg-transparent p-4 ring-1 ring-white/8 backdrop-blur-[2px] ring-inset sm:p-5"
+      className="mt-6 w-full border-y border-white/8 bg-transparent p-4 backdrop-blur-[2px] sm:p-5 md:rounded-xl md:border-0 md:ring-1 md:ring-white/8 md:ring-inset"
     >
       <h2 className="text-bloggin-muted! text-xl">latest articles ...</h2>
 
