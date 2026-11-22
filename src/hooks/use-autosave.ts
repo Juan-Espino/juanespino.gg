@@ -34,6 +34,7 @@ function snapshotOf(values: AutosaveValues) {
 type UseAutosaveOptions = {
   enabled: boolean;
   initialId?: number;
+  initialSlug?: string;
   values: AutosaveValues;
   /** Called after each successful save with the values that were saved. */
   onSaved?: (saved: AutosaveValues) => void;
@@ -42,12 +43,15 @@ type UseAutosaveOptions = {
 export function useAutosave({
   enabled,
   initialId,
+  initialSlug,
   values,
   onSaved,
 }: UseAutosaveOptions) {
   const snapshot = snapshotOf(values);
 
   const [id, setId] = useState(initialId);
+  // Drafts' slugs follow the title, so track the latest one (for delete).
+  const [slug, setSlug] = useState(initialSlug);
   const [status, setStatus] = useState<AutosaveStatus>(() => {
     return enabled ? "idle" : "off";
   });
@@ -123,6 +127,7 @@ export function useAutosave({
       if (result.ok) {
         idRef.current = result.id;
         setId(result.id);
+        setSlug(result.slug);
         lastSavedRef.current = currentSnapshot;
         retryDelayRef.current = 2000;
         onSavedRef.current?.(current);
@@ -223,5 +228,5 @@ export function useAutosave({
     }
   }, [saveDraft]);
 
-  return { id, status, pause, resume };
+  return { id, slug, status, pause, resume };
 }

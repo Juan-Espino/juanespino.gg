@@ -2,20 +2,28 @@
 import {
   useActionState,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useTransition,
 } from "react";
-import { type ArticleFormState } from "~/server/articles";
-import SubmitButton from "./submit-button";
-import MarkdownContent from "./markdown-content";
-import DeleteButton from "./delete-button";
 import Image from "next/image";
-import { UploadDropzone } from "~/utils/uploadthing";
+import { ImageUp } from "lucide-react";
+import { type ArticleFormState } from "~/server/articles";
 import { deleteUploadedImage } from "~/server/actions";
-import { Switch } from "./ui/switch";
-import AutosaveStatusLabel from "./autosave-status";
 import { useAutosave, type AutosaveValues } from "~/hooks/use-autosave";
+import { markdownStyles } from "~/lib/markdown-styles";
+import { cn } from "~/lib/utils";
+import { formattedDate } from "~/utils/helpers";
+import { useUploadThing } from "~/utils/uploadthing";
+import AutosaveStatusLabel from "./autosave-status";
+import { Spinner } from "./ui/spinner";
+import DeleteButton from "./delete-button";
+import ImageDropZone from "./image-drop-zone";
+import { useImageCropper } from "./image-cropper";
+import LiveMarkdownEditor from "./live-markdown/live-markdown-editor";
+import SubmitButton from "./submit-button";
+import { Switch } from "./ui/switch";
 
 const initialArticleFormState: ArticleFormState = {
   success: false,
@@ -35,6 +43,7 @@ type ArticleEditorProps = {
     imageKey: string | null;
     slug: string;
     published: boolean;
+    createdAt: Date;
   };
 };
 
@@ -56,6 +65,9 @@ export default function ArticleEditor({
   const [content, setContent] = useState(initialValues?.content ?? "");
   const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
   const [imageKey, setImageKey] = useState(initialValues?.imageKey ?? "");
+  const mobileTitleRef = useRef<HTMLTextAreaElement>(null);
+  const wasPublished = initialValues?.published ?? false;
+  const [publish, setPublish] = useState(wasPublished);
   // The image key stored in the database; auto-save moves it forward.
   const [savedImageKey, setSavedImageKey] = useState(
     initialValues?.imageKey ?? "",
@@ -64,6 +76,7 @@ export default function ArticleEditor({
   const autosave = useAutosave({
     enabled: !initialValues?.published,
     initialId: initialValues?.id,
+    initialSlug: initialValues?.slug,
     values: { title, content, imageUrl, imageKey },
     onSaved: (saved: AutosaveValues) => setSavedImageKey(saved.imageKey),
   });
@@ -96,7 +109,6 @@ export default function ArticleEditor({
     null,
   );
   const currentImageIsUnsaved = imageKey !== "" && imageKey !== savedImageKey;
-
 
   useEffect(() => {
     unsavedImageKeyRef.current = currentImageIsUnsaved ? imageKey : "";
@@ -169,148 +181,264 @@ export default function ArticleEditor({
     });
   }
 
+  function handleUploaded(file: { ufsUrl?: string; key?: string } | undefined) {
+    setImageRemovalError(null);
+    if (file?.ufsUrl) setImageUrl(file.ufsUrl);
+    if (file?.key) setImageKey(file.key);
+  }
+
+  const { startUpload, isUploading } = useUploadThing("articleImage", {
+    onClientUploadComplete: (res) => handleUploaded(res[0]),
+    onUploadError: (error) => setImageRemovalError(error.message),
+  });
+  const { prepare, cropper } = useImageCropper();
+  // Local preview of the cropped image while it uploads.
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const busyWithImage = isUploading || uploadPreview !== null;
+
+  // Every header image: crop to 3:2 if needed, then upload the result.
+  async function addHeaderImage(file: File) {
+    if (busyWithImage) return;
+    setImageRemovalError(null);
+    let preview: string | null = null;
+    try {
+      const ready = await prepare(file);
+      if (!ready) return; // cancelled
+      preview = URL.createObjectURL(ready);
+      setUploadPreview(preview);
+      await startUpload([ready]);
+    } catch (error) {
+      setImageRemovalError(
+        error instanceof Error ? error.message : "Couldn't add that image",
+      );
+    } finally {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+        setUploadPreview(null);
+      }
+    }
+  }
+
+  // Pasting an image anywhere in the editor sets the header image.
+  function handlePasteImage(files: File[]) {
+    const file = files[0];
+    if (imageUrl || busyWithImage || !file) return false;
+    void addHeaderImage(file);
+    return true;
+  }
+
+  const submitLabel = publish
+    ? wasPublished
+      ? "update"
+      : "publish"
+    : wasPublished
+      ? "unpublish"
+      : "save draft";
+
+  // The mobile title grows with its text, like the published hero title.
+  useLayoutEffect(() => {
+    const el = mobileTitleRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [title]);
+
+  const date = formattedDate(initialValues?.createdAt ?? new Date());
+  const deleteSlug = autosave.slug;
+
+  const fieldErrors = (errors: string[] | undefined) =>
+    errors?.map((error) => (
+      <p key={error} className="text-sm text-red-500!">
+        {error}
+      </p>
+    ));
+
+  const imageErrors = (
+    <>
+      {fieldErrors(state.errors?.imageUrl)}
+      {fieldErrors(state.errors?.imageKey)}
+      {imageRemovalError ? (
+        <p className="text-sm text-red-500!">{imageRemovalError}</p>
+      ) : null}
+    </>
+  );
+
+  const changeImageButton = (className?: string) => (
+    <button
+      type="button"
+      className={cn(
+        "bg-bloggin-background/80 text-bloggin-foreground hover:text-bloggin-accent disabled:text-bloggin-muted/50 flex cursor-pointer items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold backdrop-blur transition-colors disabled:cursor-not-allowed",
+        className,
+      )}
+      disabled={!imageKey || isRemovingImage}
+      onClick={handleChangeImage}
+    >
+      <ImageUp className="size-3.5" aria-hidden />
+      {isRemovingImage ? "removing..." : "change image"}
+    </button>
+  );
+
+  // Desktop: floated inside the editor so the text wraps around it, in the
+  // same box as the published article's header image.
+  const desktopImage = (
+    <div className={cn(markdownStyles.headerImage, "group relative")}>
+      {imageUrl ? (
+        <>
+          <Image
+            className="h-full w-full object-cover"
+            src={imageUrl}
+            alt="article image"
+            width={800}
+            height={533}
+            loading="eager"
+            sizes="492px"
+          />
+          {changeImageButton(
+            "absolute right-3 bottom-3 opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
+          )}
+        </>
+      ) : uploadPreview ? (
+        <UploadingPreview src={uploadPreview} />
+      ) : (
+        <ImageDropZone onFile={(file) => void addHeaderImage(file)} />
+      )}
+    </div>
+  );
+
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 lg:max-w-5xl lg:px-6 lg:py-8">
-      <header className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-bloggin-muted text-sm">
-            {mode === "create" ? "making article..." : "editing article..."}
+    <form action={formAction} className="flex w-full flex-col">
+      {cropper}
+      <input type="hidden" name="id" value={autosave.id ?? ""} />
+      <input type="hidden" name="title" value={title} />
+      <input type="hidden" name="content" value={content} />
+      <input type="hidden" name="imageUrl" value={imageUrl} />
+      <input type="hidden" name="imageKey" value={imageKey} />
+
+      {/* Action bar: stays in reach however long the article gets. */}
+      <div className="bg-bloggin-background/85 border-bloggin-border/30 sticky top-0 z-30 flex items-center justify-between gap-4 border-b px-4 py-3 backdrop-blur md:px-0">
+        <div className="flex items-center gap-2">
+          <p className="text-bloggin-muted text-sm max-sm:hidden">
+            {mode === "create" ? "new article" : "editing article"}
           </p>
+          <AutosaveStatusLabel status={autosave.status} />
         </div>
-      </header>
-      <form
-        action={formAction}
-        className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.9fr)] lg:items-start lg:gap-8"
-      >
-        <div className="flex min-w-0 flex-col gap-4">
+        <div className="flex items-center gap-4">
+          <label className="group/publish text-bloggin-muted has-[[data-state=checked]]:text-bloggin-foreground hover:text-bloggin-foreground flex cursor-pointer items-center gap-3 text-sm transition-colors">
+            <Switch
+              className="group-hover/publish:data-checked:bg-white group-hover/publish:data-unchecked:bg-bloggin-muted/60"
+              name="published"
+              checked={publish}
+              onCheckedChange={setPublish}
+            />
+            publish
+          </label>
+          <SubmitButton label={submitLabel} />
+        </div>
+      </div>
+
+      {/* Mobile: the published hero, with the title typed over the image. */}
+      <div className="relative aspect-3/2 overflow-hidden md:hidden">
+        {imageUrl ? (
+          <Image
+            className="h-full w-full object-cover"
+            src={imageUrl}
+            alt="article image"
+            width={800}
+            height={533}
+            loading="eager"
+            sizes="100vw"
+          />
+        ) : uploadPreview ? (
+          // eslint-disable-next-line @next/next/no-img-element -- local blob preview
+          <img
+            className="h-full w-full object-cover"
+            src={uploadPreview}
+            alt=""
+          />
+        ) : null}
+        <div className="pointer-events-none absolute -inset-1 bg-black/70 backdrop-blur-[2px]" />
+        {!imageUrl && !busyWithImage ? (
+          // Invisible full-size tap target: anywhere outside the title.
+          <ImageDropZone
+            variant="overlay"
+            onFile={(file) => void addHeaderImage(file)}
+          />
+        ) : null}
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6">
+          <textarea
+            ref={mobileTitleRef}
+            className="pointer-events-auto w-full max-w-[18rem] resize-none overflow-hidden bg-transparent text-center text-3xl leading-tight font-bold text-balance outline-none placeholder:text-white/40 sm:text-4xl"
+            rows={1}
+            value={title}
+            onChange={(event) =>
+              setTitle(event.target.value.replace(/\n/g, " "))
+            }
+            placeholder="title"
+            aria-label="title"
+          />
+          <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
+            <span className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
+              {date}
+            </span>
+          </span>
+          {!imageUrl ? (
+            <p className="text-bloggin-muted text-xs">
+              {busyWithImage ? "uploading..." : "tap, drop or paste an image"}
+            </p>
+          ) : null}
+        </div>
+        {imageUrl ? changeImageButton("absolute right-3 bottom-3 z-20") : null}
+      </div>
+
+      <div className="flex w-full flex-col px-4 pt-4 md:px-0 md:pt-8">
+        {/* Desktop header: same as the published article. */}
+        <header className="border-bloggin-border/40 mb-4 border-b pb-4 max-md:hidden">
           <input
-            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-accent w-full border-b bg-transparent py-3 text-3xl font-bold outline-none"
-            name="title"
+            className="placeholder:text-bloggin-muted/50 mb-2 w-full bg-transparent text-4xl font-bold outline-none"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="title"
+            aria-label="title"
           />
-          {state.errors?.title?.map((error) => (
-            <p key={error} className="text-sm text-red-500!">
-              {error}
-            </p>
-          ))}
-          <input type="hidden" name="id" value={autosave.id ?? ""} />
-          <input type="hidden" name="imageUrl" value={imageUrl} />
-          <input type="hidden" name="imageKey" value={imageKey} />
+          <p className="text-bloggin-muted/70! text-sm whitespace-nowrap">
+            {date}
+          </p>
+        </header>
+        {fieldErrors(state.errors?.title)}
+        <div className="md:hidden">{imageErrors}</div>
 
-          <textarea
-            className="border-bloggin-border/40 text-bloggin-foreground placeholder:text-bloggin-muted focus:border-bloggin-accent min-h-96 w-full resize-y border-b bg-transparent py-4 font-mono text-sm leading-7 transition-colors duration-200 outline-none lg:min-h-136"
-            name="content"
-            defaultValue={initialValues?.content ?? ""}
-            onChange={(event) => setContent(event.target.value)}
-            placeholder="write your article in Markdown..."
-          />
-          {state.errors?.content?.map((error) => (
-            <p key={error} className="text-sm text-red-500!">
-              {error}
-            </p>
-          ))}
-          <div className="flex items-center justify-between gap-4 pt-4">
-            <label className="group/publish text-bloggin-muted has-[[data-state=checked]]:text-bloggin-foreground hover:text-bloggin-foreground flex cursor-pointer items-center gap-3 text-sm transition-colors">
-              <Switch
-                className="group-hover/publish:data-checked:bg-white group-hover/publish:data-unchecked:bg-bloggin-muted/60"
-                name="published"
-                defaultChecked={initialValues?.published ?? false}
-              />
-              publish
-            </label>
-            <div className="flex items-center gap-4">
-              <AutosaveStatusLabel status={autosave.status} />
-              <SubmitButton mode={mode} />
-            </div>
+        <LiveMarkdownEditor
+          initialValue={initialValues?.content ?? ""}
+          onChange={setContent}
+          floatContent={desktopImage}
+          floatHostClassName="max-md:hidden"
+          onPasteImage={handlePasteImage}
+          placeholder="write your article in Markdown..."
+          className="[&_.cm-content]:min-h-[60vh]"
+        />
+        {fieldErrors(state.errors?.content)}
+        <div className="max-md:hidden">{imageErrors}</div>
+        {fieldErrors(state.errors?._form)}
+
+        {deleteSlug ? (
+          <div className="flex justify-center py-10">
+            <DeleteButton slug={deleteSlug} />
           </div>
-        </div>
+        ) : null}
+      </div>
+    </form>
+  );
+}
 
-        <aside className="sticky top-6 min-w-0 lg:flex lg:flex-col lg:gap-4">
-          {imageUrl ? (
-            <div className="flex flex-col gap-3">
-              <div className="aspect-3/2 overflow-hidden lg:rounded-xl">
-                <Image
-                  className="h-full w-full object-cover"
-                  src={imageUrl}
-                  alt="article image preview"
-                  width={800}
-                  height={533}
-                />
-              </div>
-              <button
-                type="button"
-                className="border-bloggin-border/40 text-bloggin-muted hover:border-bloggin-accent/70 hover:text-bloggin-foreground disabled:text-bloggin-muted/50 cursor-pointer rounded border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
-                disabled={!imageKey || isRemovingImage}
-                onClick={handleChangeImage}
-              >
-                {isRemovingImage ? "removing image..." : "change image"}
-              </button>
-            </div>
-          ) : (
-            <UploadDropzone
-              endpoint="articleImage"
-              config={{ mode: "auto", appendOnPaste: true }}
-              className="border-bloggin-border/40 bg-bloggin-background/60 hover:border-bloggin-accent/70 aspect-3/2 rounded-xl border border-dashed px-6 py-8 transition-colors"
-              appearance={{
-                uploadIcon: "text-bloggin-muted size-10",
-                label:
-                  "text-bloggin-foreground text-sm font-semibold hover:text-bloggin-accent ",
-                allowedContent: "text-bloggin-muted/70 text-xs",
-                button:
-                  "bg-bloggin-accent text-bloggin-background hover:bg-bloggin-foreground h-9 rounded px-4 text-sm font-bold transition-colors disabled:bg-bloggin-muted",
-              }}
-              content={{
-                label: "drop, paste or click here!",
-                allowedContent: "Images up to 4MB. Recommended 1200 x 800.",
-                button({ ready, isUploading }) {
-                  if (!ready) return "loading...";
-                  if (isUploading) return "uploading...";
-                  return "choose image";
-                },
-              }}
-              onClientUploadComplete={(res) => {
-                const uploadedFile = res[0];
-
-                setImageRemovalError(null);
-                if (uploadedFile?.ufsUrl) setImageUrl(uploadedFile.ufsUrl);
-                if (uploadedFile?.key) setImageKey(uploadedFile.key);
-              }}
-              onUploadError={(error) => {
-                console.error(error);
-              }}
-            />
-          )}
-          {state.errors?.imageUrl?.map((error) => (
-            <p key={error} className="text-sm text-red-500!">
-              {error}
-            </p>
-          ))}
-          {state.errors?.imageKey?.map((error) => (
-            <p key={error} className="text-sm text-red-500!">
-              {error}
-            </p>
-          ))}
-          {imageRemovalError ? (
-            <p className="text-sm text-red-500!">{imageRemovalError}</p>
-          ) : null}
-          <MarkdownContent
-            content={content}
-            className="border-bloggin-border/40 rounded border p-4"
-          />
-        </aside>
-      </form>
-      {state.errors?._form?.map((error) => (
-        <p key={error} className="text-sm text-red-500!">
-          {error}
-        </p>
-      ))}
-      {initialValues && (
-        <div className="flex justify-center">
-          <DeleteButton slug={initialValues.slug} />
-        </div>
-      )}
+function UploadingPreview({ src }: { src: string }) {
+  return (
+    <div className="relative h-full w-full overflow-hidden rounded-xl">
+      {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview */}
+      <img className="h-full w-full object-cover" src={src} alt="" />
+      <div className="text-bloggin-foreground absolute inset-0 flex items-center justify-center gap-2 bg-black/50 text-sm font-semibold">
+        <Spinner className="size-4" aria-hidden />
+        uploading...
+      </div>
     </div>
   );
 }

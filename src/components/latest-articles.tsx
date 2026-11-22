@@ -35,7 +35,7 @@ function LatestArticleCard({
         ) : null}
       </div>
 
-      <h3 className="text-bloggin-foreground group-hover:text-bloggin-accent mt-2 line-clamp-2 text-center text-sm font-bold italic transition-colors sm:text-base">
+      <h3 className="text-bloggin-foreground group-hover:text-bloggin-accent mt-2 line-clamp-2 text-center text-sm font-bold transition-colors sm:text-base">
         {article.title}
       </h3>
     </ArticlePrefetchLink>
