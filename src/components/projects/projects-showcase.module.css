@@ -26,27 +26,7 @@
 .project[data-active="true"] {
   flex: 3;
 }
-@keyframes gallery-enter {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .project {
-    animation: gallery-enter 800ms cubic-bezier(0.4, 0, 0.2, 1) backwards;
-  }
-  .project:nth-child(2) {
-    animation-delay: 60ms;
-  }
-  .project:nth-child(3) {
-    animation-delay: 120ms;
-  }
-}
+/* Entrance comes from <Reveal> (globals.css .reveal), gated on the curtain. */
 .image {
   object-fit: cover;
   object-position: center;

@@ -1,9 +1,13 @@
-import Link from "next/link";
 import SignInButton from "~/components/sign-in-button";
 import SignOutButton from "~/components/sign-out-button";
+import SiteNav, { NavLink, navLinkClass } from "~/components/site-nav";
 import { blogginRoutes } from "~/lib/routes";
 import { getIsAdmin } from "~/server/better-auth/admin";
 import { getSession } from "~/server/better-auth/server";
+import BlogNavLinks from "./blog-nav-links";
+
+// Strip the ghost button's chrome so account actions read as plain nav links.
+const accountButtonClass = `${navLinkClass} h-auto p-0 text-[length:inherit] font-[inherit] hover:bg-transparent dark:hover:bg-transparent`;
 
 type NavBarProps = {
   className?: string;
@@ -13,56 +17,24 @@ export default async function NavBar({ className }: NavBarProps) {
   const isSignedIn = !!session?.user;
 
   return (
-    <nav
-      className={`${className ?? ""} flex min-h-14 items-center justify-between gap-6 px-4 py-3 text-sm font-semibold sm:px-0`}
-    >
-      <div className="flex items-center gap-5">
-        <Link
-          href={blogginRoutes.home}
-          className="text-bloggin-foreground hover:text-bloggin-accent focus-visible:text-bloggin-accent transition-colors focus-visible:outline-none"
-        >
-          bloggin
-        </Link>
-        <Link
-          href={blogginRoutes.articles}
-          className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
-        >
-          all articles
-        </Link>
-        {!isAdmin && (
-          <Link
-            href={"/"}
-            className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
-          >
-            portfolio
-          </Link>
-        )}
-      </div>
-
-      <div className="border-bloggin-border/40 flex items-center gap-4 border-l pl-5">
-        {isSignedIn ? (
-          <SignOutButton className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none" />
-        ) : (
-          <SignInButton className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none" />
-        )}
-
-        {isAdmin && (
-          <>
-            <Link
-              href={blogginRoutes.drafts}
-              className="text-bloggin-muted hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
-            >
-              drafts
-            </Link>
-            <Link
-              href={blogginRoutes.new}
-              className="text-bloggin-accent hover:text-bloggin-foreground focus-visible:text-bloggin-foreground transition-colors focus-visible:outline-none"
-            >
-              new+
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
+    <SiteNav
+      className={className}
+      primary={<BlogNavLinks isAdmin={isAdmin} />}
+      secondary={
+        <>
+          {isSignedIn ? (
+            <SignOutButton className={accountButtonClass} />
+          ) : (
+            <SignInButton className={accountButtonClass} />
+          )}
+          {isAdmin && (
+            <>
+              <NavLink href={blogginRoutes.drafts} label="drafts" />
+              <NavLink href={blogginRoutes.new} label="new+" tone="accent" />
+            </>
+          )}
+        </>
+      }
+    />
   );
 }

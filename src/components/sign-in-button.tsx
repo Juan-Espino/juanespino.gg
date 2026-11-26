@@ -15,9 +15,7 @@ export default function SignInButton({ className }: SignInButtonProps) {
       variant="ghost"
       className={className}
       onClick={async () => {
-        const toastId = toast.loading("redirecting to GitHub...", {
-          position: "top-center",
-        });
+        const toastId = toast.loading("redirecting to GitHub...");
         try {
           await authClient.signIn.social({
             provider: "github",

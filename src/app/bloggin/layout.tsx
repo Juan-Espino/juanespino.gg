@@ -1,7 +1,6 @@
 import { type Metadata } from "next";
 import Footer from "../_components/footer";
 import NavBar from "../_components/navbar";
-import AshFieldCanvas from "~/components/portfolio/ash-field-canvas";
 
 export const metadata: Metadata = {
   title: {
@@ -16,8 +15,6 @@ export default function BlogginLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="relative isolate min-h-screen overflow-clip">
-      <AshFieldCanvas />
-
       {/* 1rem gutter from tablets up (content still maxes at 64rem); phones
           keep full-bleed heroes and the edge-to-edge latest strip. */}
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[66rem] flex-col md:px-4">

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { getCurtain, subscribeCurtain } from "~/lib/curtain";
 
 type StatueParticle = {
   homeX: number;
@@ -54,6 +55,14 @@ export default function StatueParticleCanvas() {
 
     let introStartTime = performance.now();
     const introDuration = 1800;
+    // The particles wait off-canvas until the page-transition curtain lifts,
+    // then fly in, so the assembly isn't spent unseen behind the black.
+    let curtainLifted = getCurtain().lifted;
+    const unsubscribeCurtain = subscribeCurtain(() => {
+      if (curtainLifted || !getCurtain().lifted) return;
+      curtainLifted = true;
+      introStartTime = performance.now();
+    });
 
     function stopAnimation() {
       if (animationFrameId !== null) {
@@ -81,6 +90,14 @@ export default function StatueParticleCanvas() {
 
     function animateStatue() {
       const particles = particlesRef.current;
+
+      if (!curtainLifted) {
+        // Particles sit at their off-canvas start points; keep the clock
+        // pinned so the intro starts from zero once the curtain lifts.
+        introStartTime = performance.now();
+        animationFrameId = window.requestAnimationFrame(animateStatue);
+        return;
+      }
 
       const pointer = pointerRef.current;
 
@@ -266,7 +283,7 @@ export default function StatueParticleCanvas() {
         }
       }
       particlesRef.current = particles;
-      introStartTime = performance.now();
+      if (curtainLifted) introStartTime = performance.now();
 
       drawStatueParticles(particlesRef.current, sampleWidth, sampleHeight);
       startAnimation();
@@ -330,6 +347,7 @@ export default function StatueParticleCanvas() {
 
     return () => {
       stopAnimation();
+      unsubscribeCurtain();
       resizeObserver.disconnect();
       mediaQuery.removeEventListener("change", handleMotionPreferenceChange);
     };

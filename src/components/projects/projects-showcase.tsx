@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { projects } from "~/data/projects";
 import styles from "./projects-showcase.module.css";
+import Reveal from "../motion/reveal";
 
 const gallery = [
   {
@@ -27,10 +28,12 @@ export default function ProjectsShowcase() {
   return (
     <section aria-label="Selected projects" className={styles.section}>
       <div className={styles.gallery} onMouseLeave={() => setActive(null)}>
-        {gallery.map((project) => {
+        {gallery.map((project, index) => {
           const expanded = active === project.slug;
           return (
-            <article
+            <Reveal
+              as="article"
+              index={index}
               key={project.slug}
               className={styles.project}
               data-active={expanded}
@@ -98,7 +101,7 @@ export default function ProjectsShowcase() {
                   </Link>
                 </div>
               </div>
-            </article>
+            </Reveal>
           );
         })}
       </div>

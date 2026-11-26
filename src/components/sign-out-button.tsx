@@ -16,16 +16,13 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
       variant="ghost"
       className={className}
       onClick={async () => {
-        const toastId = toast.loading("signing out...", {
-          position: "top-center",
-        });
+        const toastId = toast.loading("signing out...");
         try {
           await authClient.signOut();
-          toast.success("signed out", { position: "top-center", id: toastId });
+          toast.success("signed out", { id: toastId });
           router.refresh();
         } catch {
           toast.error("could not sign out ", {
-            position: "top-center",
             id: toastId,
           });
         }
