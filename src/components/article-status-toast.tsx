@@ -21,19 +21,19 @@ export default function ArticleStatusToast({
     if (hasShownToast.current) return;
 
     if (created) {
-      toast.success("article created", { position: "top-center" });
+      toast.success("article created");
       hasShownToast.current = true;
       return;
     }
 
     if (updated) {
-      toast.success("article updated", { position: "top-center" });
+      toast.success("article updated");
       hasShownToast.current = true;
       return;
     }
 
     if (deleted) {
-      toast.success("article deleted", { position: "top-center" });
+      toast.success("article deleted");
       hasShownToast.current = true;
       return;
     }

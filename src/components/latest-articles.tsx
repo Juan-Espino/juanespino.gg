@@ -3,6 +3,7 @@ import ArticlePrefetchLink from "./article-prefetch-link";
 import { blogginRoutes } from "~/lib/routes";
 import type { ArticleCard } from "~/server/articles";
 import styles from "./latest-articles.module.css";
+import Reveal from "./motion/reveal";
 
 type LatestArticlesProps = {
   latestArticles: ArticleCard[];
@@ -51,7 +52,9 @@ export default function LatestArticles({
   const hasDesktopMarquee = latestArticles.length > 4;
 
   return (
-    <section
+    <Reveal
+      as="section"
+      delay={300}
       data-mobile-marquee={hasMobileMarquee}
       data-desktop-marquee={hasDesktopMarquee}
       className="mt-6 w-full border-y border-white/8 bg-transparent p-4 backdrop-blur-[2px] sm:p-5 md:rounded-xl md:border-0 md:ring-1 md:ring-white/8 md:ring-inset"
@@ -77,6 +80,6 @@ export default function LatestArticles({
           </div>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

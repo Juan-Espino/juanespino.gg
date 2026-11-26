@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-/** Portfolio home "Find me on" placement and the project Visit link glow. */
+/**
+ * Portfolio home social links (one row, a vertical rule between each, no
+ * "Find me on" label) and the project Visit link glow.
+ */
 for (const [w, h] of [
   [1280, 900],
   [390, 844],
@@ -8,29 +11,49 @@ for (const [w, h] of [
   test(`home ${w}`, async ({ page }) => {
     await page.setViewportSize({ width: w, height: h });
     await page.goto("/");
-    const label = page.getByText("Find me on", { exact: true });
+    await expect(page.getByText("Find me on", { exact: true })).toHaveCount(0);
     const github = page.getByRole("link", { name: "GitHub" });
-    await expect(label).toBeVisible();
-    const l = (await label.boundingBox())!;
-    const g = (await github.boundingBox())!;
-    const row = (await github.locator("xpath=..").boundingBox())!;
+    // Wait for the entrance fade to finish before measuring.
+    await expect(github).toBeVisible();
+    await page.waitForTimeout(2500);
+
+    // Row children in DOM order: link, rule, link, rule, link, rule, email.
+    const items = await github.locator("xpath=..").evaluate((row) =>
+      Array.from(row.children, (el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          rule: el.getAttribute("aria-hidden") === "true",
+          left: r.left,
+          right: r.right,
+          mid: r.top + r.height / 2,
+        };
+      }),
+    );
+    expect(items.map((item) => item.rule)).toEqual([
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+    ]);
+    for (let i = 1; i < items.length; i++) {
+      // Left to right on one line, all vertically centered together.
+      expect(items[i]!.left).toBeGreaterThanOrEqual(items[i - 1]!.right);
+      expect(Math.abs(items[i]!.mid - items[0]!.mid)).toBeLessThanOrEqual(1.5);
+    }
+
+    const rowCenter = (items[0]!.left + items.at(-1)!.right) / 2;
     if (w >= 1024) {
-      // Left of the buttons, vertically centered with them.
-      expect(l.x + l.width).toBeLessThanOrEqual(g.x);
-      expect(
-        Math.abs(l.y + l.height / 2 - (g.y + g.height / 2)),
-      ).toBeLessThanOrEqual(1.5);
+      // Left-aligned with the hero copy.
+      const heading = (await page
+        .getByRole("heading", { level: 1 })
+        .boundingBox())!;
+      expect(Math.abs(items[0]!.left - heading.x)).toBeLessThanOrEqual(16);
     } else {
-      // Above the buttons, centered on the same axis.
-      expect(l.y + l.height).toBeLessThanOrEqual(g.y);
-      const text = await label.evaluate((el) => {
-        const r = document.createRange();
-        r.selectNodeContents(el);
-        const b = r.getBoundingClientRect();
-        return b.x + b.width / 2;
-      });
-      expect(Math.abs(text - (row.x + row.width / 2))).toBeLessThanOrEqual(1.5);
-      expect(Math.abs(text - w / 2)).toBeLessThanOrEqual(2);
+      // Centered on the page.
+      expect(Math.abs(rowCenter - w / 2)).toBeLessThanOrEqual(2);
     }
   });
 }

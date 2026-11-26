@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import MarkdownContent from "./markdown-content";
 import EditButton from "./edit-button";
+import Reveal from "./motion/reveal";
 
 type MobileArticleDisplayProps = {
   className: string;
@@ -54,9 +55,12 @@ export default function MobileArticleDisplay({
             scroll ? "opacity-0" : "opacity-100"
           }`}
         >
-          <h2 className="max-w-[18rem] text-center text-3xl leading-tight font-bold text-balance sm:text-4xl">
+          <Reveal
+            as="h2"
+            className="max-w-[18rem] text-center text-3xl leading-tight font-bold text-balance sm:text-4xl"
+          >
             {article.title}
-          </h2>
+          </Reveal>
           <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
             <span className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">
               {formattedDate(article.createdAt)}
@@ -64,7 +68,7 @@ export default function MobileArticleDisplay({
           </span>
         </div>
       </div>
-      <div className="w-full min-w-0 p-4 text-left">
+      <Reveal index={1} className="w-full min-w-0 p-4 text-left">
         <MarkdownContent content={article.content} />
 
         {isAdmin ? (
@@ -77,7 +81,7 @@ export default function MobileArticleDisplay({
             <ShareButton slug={article.slug} />
           </div>
         )}
-      </div>
+      </Reveal>
     </div>
   );
 }

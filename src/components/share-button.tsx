@@ -25,9 +25,9 @@ export default function ShareButton({ slug }: ShareButtonProps) {
           posthog.capture("article_shared", {
             slug,
           });
-          toast.success("link copied", { position: "top-center" });
+          toast.success("link copied");
         } catch {
-          toast.error("could not copy link", { position: "top-center" });
+          toast.error("could not copy link");
         }
       }}
     >

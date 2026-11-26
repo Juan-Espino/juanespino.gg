@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/sonner";
+import DottedGridBackground from "~/components/portfolio/dotted-grid-background";
+import PageTransition from "~/components/page-transition";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,8 +34,17 @@ export default function RootLayout({
       }
     >
       <body className="min-h-screen">
+        {/* Shared by the portfolio and the blog; mounted once so it keeps
+            animating across route changes instead of re-seeding. */}
+        <DottedGridBackground />
         {children}
-        <Toaster />
+        <Toaster position="top-right" />
+        <PageTransition />
+        {/* Entrances wait for JS to say the curtain lifted; without JS,
+            show everything as-is. */}
+        <noscript>
+          <style>{`.reveal[data-reveal]{opacity:1!important;animation:none!important}[data-scramble]{visibility:visible!important}`}</style>
+        </noscript>
       </body>
     </html>
   );

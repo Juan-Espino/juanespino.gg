@@ -394,7 +394,7 @@ export default function ArticleEditor({
         {/* Desktop header: same as the published article. */}
         <header className="border-bloggin-border/40 mb-4 border-b pb-4 max-md:hidden">
           <input
-            className="placeholder:text-bloggin-muted/50 mb-2 w-full bg-transparent text-4xl font-bold outline-none"
+            className="placeholder:text-bloggin-muted/50 mb-2 w-full bg-transparent py-2 text-4xl font-bold outline-none"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="title"
