@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import MarkdownContent from "./markdown-content";
 import EditButton from "./edit-button";
 import Reveal from "./motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 type MobileArticleDisplayProps = {
   className: string;
@@ -61,7 +62,7 @@ export default function MobileArticleDisplay({
             as="h2"
             className="max-w-[18rem] text-center text-3xl leading-tight font-bold text-balance sm:text-4xl"
           >
-            {article.title}
+            <GlitchText text={article.title} trigger="entrance" />
           </Reveal>
           <span className="before:bg-bloggin-accent relative before:absolute before:-inset-1 before:-skew-y-3">
             <span className="text-bloggin-background! relative text-sm whitespace-nowrap sm:text-base">

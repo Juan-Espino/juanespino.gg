@@ -4,6 +4,7 @@ import { authClient } from "~/server/better-auth/client";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { blogginRoutes } from "~/lib/routes";
+import GlitchText from "~/components/motion/glitch-text";
 
 type SignInButtonProps = {
   className?: string;
@@ -28,7 +29,7 @@ export default function SignInButton({ className }: SignInButtonProps) {
         }
       }}
     >
-      sign in
+      <GlitchText text="sign in" />
     </Button>
   );
 }

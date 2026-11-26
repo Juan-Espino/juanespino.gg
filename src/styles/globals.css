@@ -257,25 +257,28 @@ h4 {
   }
 }
 
-/* First-load intro for <PageTransition />: the overlay paints black on the
-   very first frame and fades out on its own, before any JS runs. Keep these
-   numbers in step with HOLD_MS / FADE_IN_MS / EASE in page-transition.tsx. */
+/* First-load intro for <PageTransition />: the page content starts hidden on
+   the very first frame and fades up on its own, before any JS runs (the
+   dotted grid sits outside the stage and is never faded). "backwards" fill
+   only: the end value is the natural opacity, so nothing lingers afterwards.
+   Keep these numbers in step with HOLD_MS / FADE_IN_MS / EASE in
+   page-transition.tsx. */
 @keyframes page-transition-intro {
   from {
-    opacity: 1;
+    opacity: 0;
   }
   to {
-    opacity: 0;
+    opacity: 1;
   }
 }
 
-.page-transition-overlay {
+.page-transition-stage {
   animation: page-transition-intro 900ms cubic-bezier(0.37, 0, 0.63, 1) 200ms
-    both;
+    backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition-overlay {
+  .page-transition-stage {
     animation: none;
   }
 }
@@ -307,4 +310,26 @@ h4 {
     opacity: 1;
     animation: none;
   }
+}
+
+/* <GlitchText />: while a letter has data-glyph, its real character keeps its
+   space but is painted transparent, and the random character is drawn on top,
+   centered over it (wider glyphs overhang evenly). `color` is untouched, so
+   currentColor (and hover color transitions) still apply to the overlay. */
+.glitch-ch {
+  position: relative;
+}
+
+.glitch-ch[data-glyph] {
+  -webkit-text-fill-color: transparent;
+}
+
+.glitch-ch[data-glyph]::after {
+  content: attr(data-glyph);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-text-fill-color: currentcolor;
+  pointer-events: none;
 }

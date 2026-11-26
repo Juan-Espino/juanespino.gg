@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { env } from "~/env";
 import { toast } from "sonner";
+import GlitchText from "~/components/motion/glitch-text";
 
 type EmailButtonProps = {
   className: string;
@@ -47,7 +48,7 @@ export default function EmailButton({ className }: EmailButtonProps) {
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
           >
-            {"Copied"}
+            <GlitchText text="Copied" />
           </motion.span>
         ) : (
           <motion.span
@@ -57,7 +58,7 @@ export default function EmailButton({ className }: EmailButtonProps) {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
           >
-            {"Email"}
+            <GlitchText text="Email" />
           </motion.span>
         )}
       </AnimatePresence>
