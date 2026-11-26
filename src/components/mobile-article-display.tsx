@@ -31,7 +31,9 @@ export default function MobileArticleDisplay({
   }, []);
   return (
     <div className={`${className ?? ""}`}>
-      <div className="sticky -top-1 aspect-3/2 overflow-hidden">
+      {/* z-20: the body below is its own stacking context (its fade-in
+          animation), so without this the text scrolls over the image. */}
+      <div className="sticky -top-1 z-20 aspect-3/2 overflow-hidden">
         {article.imageUrl ? (
           <Image
             className="h-full w-full object-cover"

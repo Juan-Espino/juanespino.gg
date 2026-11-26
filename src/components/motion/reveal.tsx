@@ -48,7 +48,9 @@ export default function Reveal<T extends ElementType = "div">({
         visible = !!entry?.isIntersecting;
         tryShow();
       },
-      { rootMargin: "0px 0px -8% 0px" },
+      // No negative margin: content that ends at the bottom of a page that
+      // cannot scroll further would otherwise never count as visible.
+      { threshold: 0 },
     );
     observer.observe(element);
     const unsubscribe = subscribeCurtain(tryShow);
