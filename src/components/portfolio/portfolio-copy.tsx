@@ -22,9 +22,11 @@ export default function PortfolioCopy() {
           "I like turning abstract ideas into polished tools that feel clear, useful, and carefully crafted. "
         }
       </Reveal>
-      {/* Social links, centered, separated by the same vertical rule as the
-          header. */}
-      <Reveal index={3} className="flex items-center justify-center gap-2">
+      {/* Social links, separated by the same vertical rule as the header. */}
+      <Reveal
+        index={3}
+        className="flex items-center justify-center gap-2 lg:justify-start"
+      >
         <Button
           asChild
           variant="ghost"
