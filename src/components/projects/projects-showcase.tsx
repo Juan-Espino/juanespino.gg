@@ -6,6 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { projects } from "~/data/projects";
 import styles from "./projects-showcase.module.css";
 import Reveal from "../motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 const gallery = [
   {
@@ -96,7 +97,7 @@ export default function ProjectsShowcase() {
                     className={`${styles.visit} -mr-6 -mb-6 inline-flex w-1/2 items-center justify-center gap-2 rounded-br-2xl py-[18px] text-xs font-medium tracking-[0.22em] text-zinc-300 uppercase hover:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white max-md:-mr-5 max-md:-mb-5 max-md:py-4`}
                     aria-label={`Visit ${project.title}`}
                   >
-                    Visit{" "}
+                    <GlitchText text="Visit" />{" "}
                     <ExternalLink aria-hidden="true" className="size-3.5" />
                   </Link>
                 </div>

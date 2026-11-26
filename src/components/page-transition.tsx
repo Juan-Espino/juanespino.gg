@@ -1,11 +1,13 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { coverCurtain, ENTRANCE, liftCurtain } from "~/lib/curtain";
 
-// Slow fade-through-black between routes: the old page sinks to black, the
-// next route loads behind the curtain, then it rises back out of black.
+// Slow fade-through-black between routes. Only the page content fades: the
+// dotted grid (mounted outside this stage) stays put, so the old page sinks
+// into the dark background and dots, the next route loads while hidden, then
+// rises back out.
 const FADE_OUT_MS = 900;
 const HOLD_MS = 200;
 const FADE_IN_MS = 900;
@@ -14,16 +16,16 @@ const STUCK_MS = 6000;
 // One soft ease-in-out for both halves: the black thins slowly, moves
 // through the middle, and settles, instead of snapping at either end.
 const EASE = ENTRANCE.ease;
-// The first-load intro is a CSS animation (.page-transition-overlay in
+// The first-load intro is a CSS animation (.page-transition-stage in
 // globals.css) so it runs on first paint, before hydration. Keep its numbers
 // in step with HOLD_MS / FADE_IN_MS / EASE.
 
 type Phase = "idle" | "out" | "waiting" | "in";
 
-export default function PageTransition() {
+export default function PageTransition({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const phase = useRef<Phase>("idle");
   const animation = useRef<Animation | null>(null);
   const stuckTimer = useRef<number | null>(null);
@@ -40,6 +42,8 @@ export default function PageTransition() {
     }, delayMs);
   }
 
+  // `from` / `to` are how covered the page is (0 = fully visible, 1 = fully
+  // hidden), so the stage's opacity is the inverse.
   function fade(
     from: number,
     to: number,
@@ -47,15 +51,15 @@ export default function PageTransition() {
     easing: string,
     delay = 0,
   ) {
-    const overlay = overlayRef.current;
-    if (!overlay) return null;
+    const stage = stageRef.current;
+    if (!stage) return null;
     animation.current?.cancel();
-    const next = overlay.animate([{ opacity: from }, { opacity: to }], {
+    const next = stage.animate([{ opacity: 1 - from }, { opacity: 1 - to }], {
       duration,
       delay,
       easing,
       // "both" so the start opacity holds during `delay` too; with "forwards"
-      // the overlay drops to its base opacity-0 during the hold and the new
+      // the stage jumps to its base opacity 1 during the hold and the new
       // page flashes before the fade-in begins.
       fill: "both",
     });
@@ -64,8 +68,8 @@ export default function PageTransition() {
   }
 
   function reveal(fromOpacity: number) {
-    const overlay = overlayRef.current;
-    if (!overlay) return;
+    const stage = stageRef.current;
+    if (!stage) return;
     if (stuckTimer.current !== null) {
       window.clearTimeout(stuckTimer.current);
       stuckTimer.current = null;
@@ -76,7 +80,11 @@ export default function PageTransition() {
     if (!next) return;
     next.onfinish = () => {
       phase.current = "idle";
-      overlay.style.pointerEvents = "none";
+      stage.style.pointerEvents = "";
+      // Drop the finished animation: its end value (1) is the natural one,
+      // and a lingering filled opacity animation keeps the whole page in its
+      // own compositing layer for nothing.
+      next.cancel();
     };
   }
 
@@ -110,19 +118,20 @@ export default function PageTransition() {
       event.preventDefault();
       if (phase.current !== "idle") return;
 
-      const overlay = overlayRef.current;
-      if (!overlay) return;
+      const stage = stageRef.current;
+      if (!stage) return;
 
       const href = url.pathname + url.search + url.hash;
       router.prefetch(href);
       phase.current = "out";
-      overlay.style.pointerEvents = "auto";
+      // No clicks on a page that's fading away.
+      stage.style.pointerEvents = "none";
 
       const out = fade(0, 1, FADE_OUT_MS, EASE);
       if (!out) return;
       out.onfinish = () => {
         phase.current = "waiting";
-        // Fully black: the next page mounts "covered" and holds its entrance.
+        // Fully hidden: the next page mounts "covered" and holds its entrance.
         coverCurtain();
         router.push(href);
         stuckTimer.current = window.setTimeout(() => reveal(1), STUCK_MS);
@@ -182,10 +191,8 @@ export default function PageTransition() {
   );
 
   return (
-    <div
-      ref={overlayRef}
-      aria-hidden="true"
-      className="page-transition-overlay pointer-events-none fixed inset-0 z-[9999] bg-black opacity-0"
-    />
+    <div ref={stageRef} className="page-transition-stage">
+      {children}
+    </div>
   );
 }

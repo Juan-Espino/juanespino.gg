@@ -66,5 +66,4 @@ export const ENTRANCE = {
   staggerMs: 90,
   /** Most stagger steps any group uses, so long lists don't crawl in. */
   maxStaggerSteps: 8,
-  scrambleMs: 550,
 } as const;

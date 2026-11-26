@@ -148,6 +148,14 @@ export default function DottedGridBackground() {
     }
 
     resizeCanvas();
+    // The page itself fades up from the first paint (CSS), but the dots only
+    // exist once this effect draws them; ease them in instead of popping.
+    if (!reduceMotionQuery.matches) {
+      canvas.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 900,
+        easing: "cubic-bezier(0.37, 0, 0.63, 1)",
+      });
+    }
 
     window.addEventListener("resize", resizeCanvas);
     return () => {

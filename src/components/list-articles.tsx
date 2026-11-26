@@ -2,6 +2,7 @@ import Link from "next/link";
 import { blogginRoutes } from "~/lib/routes";
 import type { ArticleLinks } from "~/server/articles";
 import Reveal from "./motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 type ListArticlesProps = {
   articles: ArticleLinks[];
@@ -33,7 +34,7 @@ export default function ListArticles({ articles, draft }: ListArticlesProps) {
             className="group bg-bloggin-background/40 hover:ring-bloggin-accent focus-visible:ring-bloggin-accent grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-6 rounded-xl px-4 py-4 ring-1 ring-white/8 backdrop-blur-sm transition-shadow duration-200 ring-inset focus-visible:outline-none"
           >
             <span className="text-bloggin-muted group-hover:text-bloggin-foreground truncate text-sm font-bold transition-colors duration-200 sm:text-base">
-              {article.title}
+              <GlitchText text={article.title} />
             </span>
             <time
               dateTime={article.createdAt.toISOString()}

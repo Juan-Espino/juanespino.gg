@@ -37,13 +37,14 @@ export default function RootLayout({
         {/* Shared by the portfolio and the blog; mounted once so it keeps
             animating across route changes instead of re-seeding. */}
         <DottedGridBackground />
-        {children}
+        {/* Route changes fade only what's inside the stage; the grid above
+            and the toasts below stay visible throughout. */}
+        <PageTransition>{children}</PageTransition>
         <Toaster position="top-right" />
-        <PageTransition />
         {/* Entrances wait for JS to say the curtain lifted; without JS,
             show everything as-is. */}
         <noscript>
-          <style>{`.reveal[data-reveal]{opacity:1!important;animation:none!important}[data-scramble]{visibility:visible!important}`}</style>
+          <style>{`.reveal[data-reveal]{opacity:1!important;animation:none!important}`}</style>
         </noscript>
       </body>
     </html>

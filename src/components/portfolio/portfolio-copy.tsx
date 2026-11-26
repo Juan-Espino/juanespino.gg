@@ -1,6 +1,7 @@
 import { Button } from "../ui/button";
 import EmailButton from "./email-button";
 import Reveal from "../motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 export default function PortfolioCopy() {
   return (
@@ -9,7 +10,7 @@ export default function PortfolioCopy() {
         as="h1"
         className="text-center text-2xl font-bold tracking-wide sm:text-5xl lg:text-start"
       >
-        {"Juan Espino"}
+        <GlitchText text="Juan Espino" trigger="entrance" />
       </Reveal>
       <Reveal as="p" index={1} className="text-lg leading-loose">
         {
@@ -21,11 +22,9 @@ export default function PortfolioCopy() {
           "I like turning abstract ideas into polished tools that feel clear, useful, and carefully crafted. "
         }
       </Reveal>
-      {/* Social links, separated by the same vertical rule as the header. */}
-      <Reveal
-        index={3}
-        className="flex items-center justify-center gap-2 lg:justify-start"
-      >
+      {/* Social links, centered, separated by the same vertical rule as the
+          header. */}
+      <Reveal index={3} className="flex items-center justify-center gap-2">
         <Button
           asChild
           variant="ghost"
@@ -37,7 +36,7 @@ export default function PortfolioCopy() {
             href="https://github.com/Juan-Espino"
             target="_blank"
           >
-            {"GitHub"}
+            <GlitchText text="GitHub" />
           </a>
         </Button>
         <span aria-hidden="true" className="bg-bloggin-border/40 h-5 w-px" />
@@ -52,7 +51,7 @@ export default function PortfolioCopy() {
             href="https://x.com/greyppk"
             target="_blank"
           >
-            {"X"}
+            <GlitchText text="X" />
           </a>
         </Button>
         <span aria-hidden="true" className="bg-bloggin-border/40 h-5 w-px" />
@@ -67,7 +66,7 @@ export default function PortfolioCopy() {
             href="https://www.linkedin.com/in/juan-espino-03591241b/"
             target="_blank"
           >
-            {"LinkedIn"}
+            <GlitchText text="LinkedIn" />
           </a>
         </Button>
         <span aria-hidden="true" className="bg-bloggin-border/40 h-5 w-px" />

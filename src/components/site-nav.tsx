@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
+import GlitchText from "~/components/motion/glitch-text";
 
 /**
  * The one header used across the app: centered, portfolio typography, muted
@@ -26,7 +27,7 @@ const toneClass: Record<NonNullable<NavLinkProps["tone"]>, string> = {
 export function NavLink({ href, label, tone = "muted" }: NavLinkProps) {
   return (
     <Link href={href} className={toneClass[tone]}>
-      {label}
+      <GlitchText text={label} />
     </Link>
   );
 }

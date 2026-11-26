@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import posthog from "posthog-js";
 import { blogginRoutes } from "~/lib/routes";
+import GlitchText from "~/components/motion/glitch-text";
 
 type ShareButtonProps = {
   slug: string;
@@ -31,7 +32,7 @@ export default function ShareButton({ slug }: ShareButtonProps) {
         }
       }}
     >
-      {"share"}
+      <GlitchText text="share" />
     </Button>
   );
 }

@@ -4,6 +4,7 @@ import { blogginRoutes } from "~/lib/routes";
 import type { ArticleCard } from "~/server/articles";
 import styles from "./latest-articles.module.css";
 import Reveal from "./motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 type LatestArticlesProps = {
   latestArticles: ArticleCard[];
@@ -37,7 +38,7 @@ function LatestArticleCard({
       </div>
 
       <h3 className="text-bloggin-foreground group-hover:text-bloggin-accent mt-2 line-clamp-2 text-center text-sm font-bold transition-colors sm:text-base">
-        {article.title}
+        <GlitchText text={article.title} />
       </h3>
     </ArticlePrefetchLink>
   );
@@ -59,7 +60,13 @@ export default function LatestArticles({
       data-desktop-marquee={hasDesktopMarquee}
       className="mt-6 w-full border-y border-white/8 bg-transparent p-4 backdrop-blur-[2px] sm:p-5 md:rounded-xl md:border-0 md:ring-1 md:ring-white/8 md:ring-inset"
     >
-      <h2 className="text-bloggin-muted! text-xl">latest articles ...</h2>
+      <GlitchText
+        as="h2"
+        trigger="entrance"
+        delay={300}
+        text="latest articles ..."
+        className="text-bloggin-muted! text-xl"
+      />
 
       <div className="-mx-2 mt-4 -mb-2 overflow-hidden p-2">
         <div className="bloggin-marquee flex w-max gap-4">

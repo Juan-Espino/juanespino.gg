@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import EditButton from "./edit-button";
 import Reveal from "./motion/reveal";
+import GlitchText from "~/components/motion/glitch-text";
 
 type ArticleDisplayProps = {
   article?: Article;
@@ -67,7 +68,7 @@ export default function ArticleDisplay({
                 as="h2"
                 className="mb-2 py-2 text-4xl font-bold text-pretty"
               >
-                {article.title}
+                <GlitchText text={article.title} trigger="entrance" />
               </Reveal>
               <Reveal
                 as="p"

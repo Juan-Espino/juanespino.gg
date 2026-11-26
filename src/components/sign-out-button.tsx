@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "~/server/better-auth/client";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import GlitchText from "~/components/motion/glitch-text";
 
 type SignOutButtonProps = {
   className?: string;
@@ -28,7 +29,7 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
         }
       }}
     >
-      sign out
+      <GlitchText text="sign out" />
     </Button>
   );
 }
