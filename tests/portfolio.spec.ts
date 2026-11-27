@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Portfolio home social links (one centered row, a vertical rule between
- * each, no "Find me on" label) and the project Visit link glow.
+ * Portfolio home social links (one row, a vertical rule between each, no
+ * "Find me on" label) and the project Visit link glow.
  */
 for (const [w, h] of [
   [1280, 900],
@@ -44,14 +44,17 @@ for (const [w, h] of [
       expect(Math.abs(items[i]!.mid - items[0]!.mid)).toBeLessThanOrEqual(1.5);
     }
 
-    // Centered in its column (the hero copy on desktop, the page on mobile).
     const rowCenter = (items[0]!.left + items.at(-1)!.right) / 2;
-    const column = await github.locator("xpath=../..").evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      return (r.left + r.right) / 2;
-    });
-    expect(Math.abs(rowCenter - column)).toBeLessThanOrEqual(2);
-    if (w < 1024) expect(Math.abs(rowCenter - w / 2)).toBeLessThanOrEqual(2);
+    if (w >= 1024) {
+      // Left-aligned with the hero copy.
+      const heading = (await page
+        .getByRole("heading", { level: 1 })
+        .boundingBox())!;
+      expect(Math.abs(items[0]!.left - heading.x)).toBeLessThanOrEqual(16);
+    } else {
+      // Centered on the page.
+      expect(Math.abs(rowCenter - w / 2)).toBeLessThanOrEqual(2);
+    }
   });
 }
 test("visit glow", async ({ page }) => {
